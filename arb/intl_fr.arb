@@ -521,6 +521,7 @@
   "restoreStrategyCompatible": "Compatible",
   "logsTest": "Test des journaux",
   "emptyTip": "{label} ne peut pas être vide",
+  "invalidCharactersTip": "{label} contient des caractères non autorisés",
   "urlTip": "{label} doit être une URL",
   "invalidLinkTip": "Ce n’est ni un lien d’abonnement ni un lien de partage de proxy",
   "numberTip": "{label} doit être un nombre",

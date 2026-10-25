@@ -170,6 +170,9 @@ class Database extends _$Database {
   MigrationStrategy get migration {
     return MigrationStrategy(
       onUpgrade: (m, from, to) => transaction(() async {
+        if (from >= 22 && (await _columnsOf('mitm_modules')).isEmpty) {
+          from = 21;
+        }
         if (from < 2) {
           await m.createTable(iconRecords);
           await _migrateV1Rules();
@@ -247,7 +250,10 @@ class Database extends _$Database {
           await _recordMitmConsent();
         }
       }),
-      beforeOpen: (_) => customStatement('PRAGMA foreign_keys = ON'),
+      beforeOpen: (_) async {
+        await customStatement('PRAGMA foreign_keys = ON');
+        await _addColumnIfMissing(createMigrator(), profiles, profiles.headers);
+      },
     );
   }
 

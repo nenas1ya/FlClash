@@ -1630,6 +1630,11 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String invalidCharactersTip(Object label) {
+    return '$label에 허용되지 않는 문자가 포함되어 있습니다';
+  }
+
+  @override
   String urlTip(Object label) {
     return '$label은(는) URL이어야 합니다';
   }

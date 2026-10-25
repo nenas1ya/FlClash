@@ -1630,6 +1630,11 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String invalidCharactersTip(Object label) {
+    return '$labelに使用できない文字が含まれています';
+  }
+
+  @override
   String urlTip(Object label) {
     return '$labelはURLである必要があります';
   }

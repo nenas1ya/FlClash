@@ -521,6 +521,7 @@
   "restoreStrategyCompatible": "호환",
   "logsTest": "로그 테스트",
   "emptyTip": "{label}을(를) 입력하세요",
+  "invalidCharactersTip": "{label}에 허용되지 않는 문자가 포함되어 있습니다",
   "urlTip": "{label}은(는) URL이어야 합니다",
   "invalidLinkTip": "구독 링크 또는 프록시 공유 링크가 아닙니다",
   "numberTip": "{label}은(는) 숫자여야 합니다",

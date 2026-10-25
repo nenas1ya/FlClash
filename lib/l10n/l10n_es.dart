@@ -1687,6 +1687,11 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String invalidCharactersTip(Object label) {
+    return '$label contiene caracteres no permitidos';
+  }
+
+  @override
   String urlTip(Object label) {
     return '$label debe ser una URL';
   }

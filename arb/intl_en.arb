@@ -570,6 +570,7 @@
   "restoreStrategyCompatible": "Compatible",
   "logsTest": "Logs test",
   "emptyTip": "{label} cannot be empty",
+  "invalidCharactersTip": "{label} contains characters that are not allowed",
   "urlTip": "{label} must be a URL",
   "invalidLinkTip": "Not a subscription link or a proxy share link",
   "numberTip": "{label} must be a number",

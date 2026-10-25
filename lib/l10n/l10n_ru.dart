@@ -1669,6 +1669,11 @@ class AppLocalizationsRu extends AppLocalizations {
   }
 
   @override
+  String invalidCharactersTip(Object label) {
+    return '«$label» содержит недопустимые символы';
+  }
+
+  @override
   String urlTip(Object label) {
     return 'Значение «$label» должно быть URL';
   }

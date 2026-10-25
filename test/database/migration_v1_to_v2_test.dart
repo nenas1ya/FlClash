@@ -1163,4 +1163,36 @@ void main() {
     expect(_userVersion(raw), 26);
     expect(_hasTable(raw, 'proxy_groups'), isTrue);
   });
+
+  test('opening adds headers to profiles at the current version', () async {
+    raw.execute('ALTER TABLE profiles DROP COLUMN headers');
+    raw.execute(
+      'INSERT INTO profiles (id, type, label, url, extend_type, '
+      'auto_update_duration_millis, auto_update, selected_map, unfold_set) '
+      "VALUES (3, 'url', 'Sub', 'https://example.com/sub', 'standard', 0, 0, "
+      "'{}', '[]')",
+    );
+
+    final database = await openAndMigrate();
+
+    expect(_columnsOf(raw, 'profiles'), contains('headers'));
+    expect(_userVersion(raw), 26);
+    expect((await database.profilesDao.query().get()).single.headers, isEmpty);
+  });
+
+  for (final version in [22, 23]) {
+    test('a v$version of the hwid fork, with no mitm_modules, '
+        'runs the v22 upgrade', () async {
+      _downgradeToV21(raw);
+      raw.execute('PRAGMA user_version = $version');
+      expect(_columnsOf(raw, 'profiles'), contains('headers'));
+
+      final database = await openAndMigrate();
+
+      expect(_hasTable(raw, 'mitm_modules'), isTrue);
+      expect(_columnsOf(raw, 'mitm_modules'), contains('accepted'));
+      expect(_userVersion(raw), 26);
+      expect(await database.mitmModulesDao.query().get(), isEmpty);
+    });
+  }
 }

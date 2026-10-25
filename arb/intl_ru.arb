@@ -521,6 +521,7 @@
   "restoreStrategyCompatible": "Совместимость",
   "logsTest": "Тест логов",
   "emptyTip": "Поле «{label}» не может быть пустым",
+  "invalidCharactersTip": "«{label}» содержит недопустимые символы",
   "urlTip": "Значение «{label}» должно быть URL",
   "invalidLinkTip": "Это не ссылка на подписку и не ссылка на прокси",
   "numberTip": "Значение «{label}» должно быть числом",

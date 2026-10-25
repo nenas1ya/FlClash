@@ -3240,6 +3240,12 @@ abstract class AppLocalizations {
   /// **'{label} cannot be empty'**
   String emptyTip(Object label);
 
+  /// No description provided for @invalidCharactersTip.
+  ///
+  /// In en, this message translates to:
+  /// **'{label} contains characters that are not allowed'**
+  String invalidCharactersTip(Object label);
+
   /// No description provided for @urlTip.
   ///
   /// In en, this message translates to:

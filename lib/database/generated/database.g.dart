@@ -67,6 +67,15 @@ class $ProfilesTable extends Profiles
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  @override
+  late final GeneratedColumnWithTypeConverter<Map<String, String>?, String>
+  headers = GeneratedColumn<String>(
+    'headers',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  ).withConverter<Map<String, String>?>($ProfilesTable.$converterheadersn);
   static const VerificationMeta _lastUpdateDateMeta = const VerificationMeta(
     'lastUpdateDate',
   );
@@ -199,6 +208,7 @@ class $ProfilesTable extends Profiles
     currentGroupName,
     url,
     ageSecretKey,
+    headers,
     lastUpdateDate,
     extendType,
     scriptId,
@@ -353,6 +363,12 @@ class $ProfilesTable extends Profiles
         DriftSqlType.string,
         data['${effectivePrefix}age_secret_key'],
       ),
+      headers: $ProfilesTable.$converterheadersn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}headers'],
+        ),
+      ),
       lastUpdateDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_update_date'],
@@ -421,6 +437,10 @@ class $ProfilesTable extends Profiles
 
   static JsonTypeConverter2<ProfileType, String, String> $convertertype =
       const EnumNameConverter<ProfileType>(ProfileType.values);
+  static TypeConverter<Map<String, String>, String> $converterheaders =
+      const StringMapConverter();
+  static TypeConverter<Map<String, String>?, String?> $converterheadersn =
+      NullAwareTypeConverter.wrap($converterheaders);
   static TypeConverter<Map<String, String>, String> $converterexitTargets =
       const StringMapConverter();
   static TypeConverter<Map<String, String>?, String?> $converterexitTargetsn =
@@ -442,6 +462,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
   final String? currentGroupName;
   final String url;
   final String? ageSecretKey;
+  final Map<String, String>? headers;
   final DateTime? lastUpdateDate;
 
   /// Older builds pick a script or added rules by it; this build runs both.
@@ -465,6 +486,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     this.currentGroupName,
     required this.url,
     this.ageSecretKey,
+    this.headers,
     this.lastUpdateDate,
     required this.extendType,
     this.scriptId,
@@ -492,6 +514,11 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     map['url'] = Variable<String>(url);
     if (!nullToAbsent || ageSecretKey != null) {
       map['age_secret_key'] = Variable<String>(ageSecretKey);
+    }
+    if (!nullToAbsent || headers != null) {
+      map['headers'] = Variable<String>(
+        $ProfilesTable.$converterheadersn.toSql(headers),
+      );
     }
     if (!nullToAbsent || lastUpdateDate != null) {
       map['last_update_date'] = Variable<DateTime>(lastUpdateDate);
@@ -550,6 +577,9 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       ageSecretKey: ageSecretKey == null && nullToAbsent
           ? const Value.absent()
           : Value(ageSecretKey),
+      headers: headers == null && nullToAbsent
+          ? const Value.absent()
+          : Value(headers),
       lastUpdateDate: lastUpdateDate == null && nullToAbsent
           ? const Value.absent()
           : Value(lastUpdateDate),
@@ -593,6 +623,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       currentGroupName: serializer.fromJson<String?>(json['currentGroupName']),
       url: serializer.fromJson<String>(json['url']),
       ageSecretKey: serializer.fromJson<String?>(json['ageSecretKey']),
+      headers: serializer.fromJson<Map<String, String>?>(json['headers']),
       lastUpdateDate: serializer.fromJson<DateTime?>(json['lastUpdateDate']),
       extendType: serializer.fromJson<String>(json['extendType']),
       scriptId: serializer.fromJson<int?>(json['scriptId']),
@@ -627,6 +658,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       'currentGroupName': serializer.toJson<String?>(currentGroupName),
       'url': serializer.toJson<String>(url),
       'ageSecretKey': serializer.toJson<String?>(ageSecretKey),
+      'headers': serializer.toJson<Map<String, String>?>(headers),
       'lastUpdateDate': serializer.toJson<DateTime?>(lastUpdateDate),
       'extendType': serializer.toJson<String>(extendType),
       'scriptId': serializer.toJson<int?>(scriptId),
@@ -653,6 +685,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     Value<String?> currentGroupName = const Value.absent(),
     String? url,
     Value<String?> ageSecretKey = const Value.absent(),
+    Value<Map<String, String>?> headers = const Value.absent(),
     Value<DateTime?> lastUpdateDate = const Value.absent(),
     String? extendType,
     Value<int?> scriptId = const Value.absent(),
@@ -674,6 +707,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
         : this.currentGroupName,
     url: url ?? this.url,
     ageSecretKey: ageSecretKey.present ? ageSecretKey.value : this.ageSecretKey,
+    headers: headers.present ? headers.value : this.headers,
     lastUpdateDate: lastUpdateDate.present
         ? lastUpdateDate.value
         : this.lastUpdateDate,
@@ -704,6 +738,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       ageSecretKey: data.ageSecretKey.present
           ? data.ageSecretKey.value
           : this.ageSecretKey,
+      headers: data.headers.present ? data.headers.value : this.headers,
       lastUpdateDate: data.lastUpdateDate.present
           ? data.lastUpdateDate.value
           : this.lastUpdateDate,
@@ -744,6 +779,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
           ..write('currentGroupName: $currentGroupName, ')
           ..write('url: $url, ')
           ..write('ageSecretKey: $ageSecretKey, ')
+          ..write('headers: $headers, ')
           ..write('lastUpdateDate: $lastUpdateDate, ')
           ..write('extendType: $extendType, ')
           ..write('scriptId: $scriptId, ')
@@ -768,6 +804,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     currentGroupName,
     url,
     ageSecretKey,
+    headers,
     lastUpdateDate,
     extendType,
     scriptId,
@@ -791,6 +828,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
           other.currentGroupName == this.currentGroupName &&
           other.url == this.url &&
           other.ageSecretKey == this.ageSecretKey &&
+          other.headers == this.headers &&
           other.lastUpdateDate == this.lastUpdateDate &&
           other.extendType == this.extendType &&
           other.scriptId == this.scriptId &&
@@ -812,6 +850,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   final Value<String?> currentGroupName;
   final Value<String> url;
   final Value<String?> ageSecretKey;
+  final Value<Map<String, String>?> headers;
   final Value<DateTime?> lastUpdateDate;
   final Value<String> extendType;
   final Value<int?> scriptId;
@@ -831,6 +870,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     this.currentGroupName = const Value.absent(),
     this.url = const Value.absent(),
     this.ageSecretKey = const Value.absent(),
+    this.headers = const Value.absent(),
     this.lastUpdateDate = const Value.absent(),
     this.extendType = const Value.absent(),
     this.scriptId = const Value.absent(),
@@ -851,6 +891,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     this.currentGroupName = const Value.absent(),
     required String url,
     this.ageSecretKey = const Value.absent(),
+    this.headers = const Value.absent(),
     this.lastUpdateDate = const Value.absent(),
     required String extendType,
     this.scriptId = const Value.absent(),
@@ -878,6 +919,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     Expression<String>? currentGroupName,
     Expression<String>? url,
     Expression<String>? ageSecretKey,
+    Expression<String>? headers,
     Expression<DateTime>? lastUpdateDate,
     Expression<String>? extendType,
     Expression<int>? scriptId,
@@ -898,6 +940,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
       if (currentGroupName != null) 'current_group_name': currentGroupName,
       if (url != null) 'url': url,
       if (ageSecretKey != null) 'age_secret_key': ageSecretKey,
+      if (headers != null) 'headers': headers,
       if (lastUpdateDate != null) 'last_update_date': lastUpdateDate,
       if (extendType != null) 'extend_type': extendType,
       if (scriptId != null) 'script_id': scriptId,
@@ -921,6 +964,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     Value<String?>? currentGroupName,
     Value<String>? url,
     Value<String?>? ageSecretKey,
+    Value<Map<String, String>?>? headers,
     Value<DateTime?>? lastUpdateDate,
     Value<String>? extendType,
     Value<int?>? scriptId,
@@ -941,6 +985,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
       currentGroupName: currentGroupName ?? this.currentGroupName,
       url: url ?? this.url,
       ageSecretKey: ageSecretKey ?? this.ageSecretKey,
+      headers: headers ?? this.headers,
       lastUpdateDate: lastUpdateDate ?? this.lastUpdateDate,
       extendType: extendType ?? this.extendType,
       scriptId: scriptId ?? this.scriptId,
@@ -979,6 +1024,11 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     }
     if (ageSecretKey.present) {
       map['age_secret_key'] = Variable<String>(ageSecretKey.value);
+    }
+    if (headers.present) {
+      map['headers'] = Variable<String>(
+        $ProfilesTable.$converterheadersn.toSql(headers.value),
+      );
     }
     if (lastUpdateDate.present) {
       map['last_update_date'] = Variable<DateTime>(lastUpdateDate.value);
@@ -1040,6 +1090,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
           ..write('currentGroupName: $currentGroupName, ')
           ..write('url: $url, ')
           ..write('ageSecretKey: $ageSecretKey, ')
+          ..write('headers: $headers, ')
           ..write('lastUpdateDate: $lastUpdateDate, ')
           ..write('extendType: $extendType, ')
           ..write('scriptId: $scriptId, ')
@@ -5578,6 +5629,7 @@ typedef $$ProfilesTableCreateCompanionBuilder =
       Value<String?> currentGroupName,
       required String url,
       Value<String?> ageSecretKey,
+      Value<Map<String, String>?> headers,
       Value<DateTime?> lastUpdateDate,
       required String extendType,
       Value<int?> scriptId,
@@ -5599,6 +5651,7 @@ typedef $$ProfilesTableUpdateCompanionBuilder =
       Value<String?> currentGroupName,
       Value<String> url,
       Value<String?> ageSecretKey,
+      Value<Map<String, String>?> headers,
       Value<DateTime?> lastUpdateDate,
       Value<String> extendType,
       Value<int?> scriptId,
@@ -5729,6 +5782,16 @@ class $$ProfilesTableFilterComposer
   ColumnFilters<String> get ageSecretKey => $composableBuilder(
     column: $table.ageSecretKey,
     builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<
+    Map<String, String>?,
+    Map<String, String>,
+    String
+  >
+  get headers => $composableBuilder(
+    column: $table.headers,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
   );
 
   ColumnFilters<DateTime> get lastUpdateDate => $composableBuilder(
@@ -5944,6 +6007,11 @@ class $$ProfilesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get headers => $composableBuilder(
+    column: $table.headers,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastUpdateDate => $composableBuilder(
     column: $table.lastUpdateDate,
     builder: (column) => ColumnOrderings(column),
@@ -6035,6 +6103,9 @@ class $$ProfilesTableAnnotationComposer
     column: $table.ageSecretKey,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<Map<String, String>?, String> get headers =>
+      $composableBuilder(column: $table.headers, builder: (column) => column);
 
   GeneratedColumn<DateTime> get lastUpdateDate => $composableBuilder(
     column: $table.lastUpdateDate,
@@ -6231,6 +6302,7 @@ class $$ProfilesTableTableManager
                 Value<String?> currentGroupName = const Value.absent(),
                 Value<String> url = const Value.absent(),
                 Value<String?> ageSecretKey = const Value.absent(),
+                Value<Map<String, String>?> headers = const Value.absent(),
                 Value<DateTime?> lastUpdateDate = const Value.absent(),
                 Value<String> extendType = const Value.absent(),
                 Value<int?> scriptId = const Value.absent(),
@@ -6251,6 +6323,7 @@ class $$ProfilesTableTableManager
                 currentGroupName: currentGroupName,
                 url: url,
                 ageSecretKey: ageSecretKey,
+                headers: headers,
                 lastUpdateDate: lastUpdateDate,
                 extendType: extendType,
                 scriptId: scriptId,
@@ -6272,6 +6345,7 @@ class $$ProfilesTableTableManager
                 Value<String?> currentGroupName = const Value.absent(),
                 required String url,
                 Value<String?> ageSecretKey = const Value.absent(),
+                Value<Map<String, String>?> headers = const Value.absent(),
                 Value<DateTime?> lastUpdateDate = const Value.absent(),
                 required String extendType,
                 Value<int?> scriptId = const Value.absent(),
@@ -6292,6 +6366,7 @@ class $$ProfilesTableTableManager
                 currentGroupName: currentGroupName,
                 url: url,
                 ageSecretKey: ageSecretKey,
+                headers: headers,
                 lastUpdateDate: lastUpdateDate,
                 extendType: extendType,
                 scriptId: scriptId,

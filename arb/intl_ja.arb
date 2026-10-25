@@ -521,6 +521,7 @@
   "restoreStrategyCompatible": "互換",
   "logsTest": "ログテスト",
   "emptyTip": "{label}は空にできません",
+  "invalidCharactersTip": "{label}に使用できない文字が含まれています",
   "urlTip": "{label}はURLである必要があります",
   "invalidLinkTip": "サブスクリプションリンクまたはプロキシの共有リンクではありません",
   "numberTip": "{label}は数値である必要があります",

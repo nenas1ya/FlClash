@@ -521,6 +521,7 @@
   "restoreStrategyCompatible": "兼容",
   "logsTest": "日志测试",
   "emptyTip": "{label}不能为空",
+  "invalidCharactersTip": "{label}包含不允许的字符",
   "urlTip": "{label}必须为URL",
   "invalidLinkTip": "不是有效的订阅链接或代理分享链接",
   "numberTip": "{label}必须为数字",

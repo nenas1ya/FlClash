@@ -1621,6 +1621,11 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String invalidCharactersTip(Object label) {
+    return '$label包含不允许的字符';
+  }
+
+  @override
   String urlTip(Object label) {
     return '$label必须为URL';
   }
