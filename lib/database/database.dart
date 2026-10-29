@@ -252,7 +252,9 @@ class Database extends _$Database {
       }),
       beforeOpen: (_) async {
         await customStatement('PRAGMA foreign_keys = ON');
-        await _addColumnIfMissing(createMigrator(), profiles, profiles.headers);
+        final m = createMigrator();
+        await _addColumnIfMissing(m, profiles, profiles.headers);
+        await _addColumnIfMissing(m, profiles, profiles.sendDeviceHeaders);
       },
     );
   }

@@ -63,6 +63,21 @@ void main() {
       expect(Profile.fromJson(json).headers, isEmpty);
     });
 
+    test('JSON without the device switch reads as sending them', () {
+      final json =
+          jsonDecode(
+                  jsonEncode(
+                    Profile.normal(
+                      url: 'https://example.com',
+                    ).copyWith(sendDeviceHeaders: false),
+                  ),
+                )
+                as Map<String, Object?>
+            ..remove('sendDeviceHeaders');
+
+      expect(Profile.fromJson(json).sendDeviceHeaders, isTrue);
+    });
+
     test('normal takes its type from whether it has a url', () {
       expect(Profile.normal().type, ProfileType.file);
       expect(

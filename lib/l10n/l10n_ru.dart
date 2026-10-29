@@ -4290,4 +4290,18 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Условия по одному полю объединяются через «или», по разным полям — через «и».';
+
+  @override
+  String get sendDeviceHeaders => 'Отправлять ID устройства (HWID)';
+
+  @override
+  String get deviceLimitReached =>
+      'Достигнут лимит устройств подписки. Удалите старое устройство в панели или обратитесь к провайдеру.';
+
+  @override
+  String get deviceIdUnsupported => 'Подписка не приняла ID этого устройства.';
+
+  @override
+  String get deviceIdNotSent =>
+      'Подписке нужен ID устройства. Включите «Отправлять ID устройства» или добавьте заголовок x-hwid.';
 }

@@ -4293,4 +4293,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Conditions on one field match any of them, on different fields all.';
+
+  @override
+  String get sendDeviceHeaders => 'Send device ID (HWID)';
+
+  @override
+  String get deviceLimitReached =>
+      'The subscription has reached its device limit. Remove an old device in the panel or ask your provider.';
+
+  @override
+  String get deviceIdUnsupported => 'The subscription rejected this device ID.';
+
+  @override
+  String get deviceIdNotSent =>
+      'The subscription requires a device ID. Turn on “Send device ID” or add an x-hwid request header.';
 }

@@ -7535,6 +7535,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Conditions on one field match any of them, on different fields all.'**
   String get httpConditionTip;
+
+  /// No description provided for @sendDeviceHeaders.
+  ///
+  /// In en, this message translates to:
+  /// **'Send device ID (HWID)'**
+  String get sendDeviceHeaders;
+
+  /// No description provided for @deviceLimitReached.
+  ///
+  /// In en, this message translates to:
+  /// **'The subscription has reached its device limit. Remove an old device in the panel or ask your provider.'**
+  String get deviceLimitReached;
+
+  /// No description provided for @deviceIdUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'The subscription rejected this device ID.'**
+  String get deviceIdUnsupported;
+
+  /// No description provided for @deviceIdNotSent.
+  ///
+  /// In en, this message translates to:
+  /// **'The subscription requires a device ID. Turn on “Send device ID” or add an x-hwid request header.'**
+  String get deviceIdNotSent;
 }
 
 class _AppLocalizationsDelegate

@@ -4088,4 +4088,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。';
+
+  @override
+  String get sendDeviceHeaders => 'デバイス ID (HWID) を送信';
+
+  @override
+  String get deviceLimitReached =>
+      'サブスクリプションのデバイス数が上限に達しました。パネルで古いデバイスを削除するか、プロバイダーに連絡してください。';
+
+  @override
+  String get deviceIdUnsupported => 'サブスクリプションがこのデバイス ID を拒否しました。';
+
+  @override
+  String get deviceIdNotSent =>
+      'サブスクリプションにはデバイス ID が必要です。「デバイス ID を送信」をオンにするか、x-hwid リクエストヘッダーを追加してください。';
 }

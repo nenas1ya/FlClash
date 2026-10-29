@@ -83,6 +83,13 @@ class App extends AppIconSource {
     return methodChannel.invokeMethod<bool>('moveTaskToBack');
   }
 
+  Future<Map<String, String?>> getDeviceIdentity() async {
+    final info = await methodChannel.invokeMapMethod<String, String?>(
+      'getDeviceIdentity',
+    );
+    return info ?? const {};
+  }
+
   Future<List<Package>> getPackages() async {
     final packagesString = await methodChannel.invokeMethod<String>(
       'getPackages',

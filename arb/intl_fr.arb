@@ -1236,5 +1236,9 @@
   "selectHttpRequestHint": "Sa requête, sa réponse et ses temps s’affichent ici",
   "httpConditionShows": "Requêtes affichées : {count}",
   "httpConditionValuesIn": "{field} dans la liste",
-  "httpConditionTip": "Les conditions d’un même champ en demandent une seule, celles de champs différents toutes."
+  "httpConditionTip": "Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.",
+  "sendDeviceHeaders": "Envoyer l’ID de l’appareil (HWID)",
+  "deviceLimitReached": "L’abonnement a atteint sa limite d’appareils. Supprimez un ancien appareil dans le panneau ou contactez votre fournisseur.",
+  "deviceIdUnsupported": "L’abonnement a refusé l’ID de cet appareil.",
+  "deviceIdNotSent": "L’abonnement exige un ID d’appareil. Activez « Envoyer l’ID de l’appareil » ou ajoutez un en-tête x-hwid."
 }

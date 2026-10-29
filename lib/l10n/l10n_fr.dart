@@ -4343,4 +4343,19 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.';
+
+  @override
+  String get sendDeviceHeaders => 'Envoyer l’ID de l’appareil (HWID)';
+
+  @override
+  String get deviceLimitReached =>
+      'L’abonnement a atteint sa limite d’appareils. Supprimez un ancien appareil dans le panneau ou contactez votre fournisseur.';
+
+  @override
+  String get deviceIdUnsupported =>
+      'L’abonnement a refusé l’ID de cet appareil.';
+
+  @override
+  String get deviceIdNotSent =>
+      'L’abonnement exige un ID d’appareil. Activez « Envoyer l’ID de l’appareil » ou ajoutez un en-tête x-hwid.';
 }

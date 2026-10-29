@@ -1236,5 +1236,9 @@
   "selectHttpRequestHint": "Aquí aparecerán su solicitud, su respuesta y sus tiempos",
   "httpConditionShows": "Solicitudes mostradas: {count}",
   "httpConditionValuesIn": "{field} en la lista",
-  "httpConditionTip": "Las condiciones de un mismo campo se cumplen con una de ellas; las de campos distintos, todas."
+  "httpConditionTip": "Las condiciones de un mismo campo se cumplen con una de ellas; las de campos distintos, todas.",
+  "sendDeviceHeaders": "Enviar ID del dispositivo (HWID)",
+  "deviceLimitReached": "La suscripción alcanzó su límite de dispositivos. Elimina un dispositivo antiguo en el panel o contacta a tu proveedor.",
+  "deviceIdUnsupported": "La suscripción rechazó el ID de este dispositivo.",
+  "deviceIdNotSent": "La suscripción requiere un ID de dispositivo. Activa «Enviar ID del dispositivo» o añade un encabezado x-hwid."
 }

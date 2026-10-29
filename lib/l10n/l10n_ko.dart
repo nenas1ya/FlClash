@@ -4166,4 +4166,18 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get httpConditionTip =>
       '같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다.';
+
+  @override
+  String get sendDeviceHeaders => '기기 ID(HWID) 보내기';
+
+  @override
+  String get deviceLimitReached =>
+      '구독의 기기 수 한도에 도달했습니다. 패널에서 이전 기기를 삭제하거나 제공업체에 문의하세요.';
+
+  @override
+  String get deviceIdUnsupported => '구독이 이 기기 ID를 거부했습니다.';
+
+  @override
+  String get deviceIdNotSent =>
+      '구독에 기기 ID가 필요합니다. \'기기 ID 보내기\'를 켜거나 x-hwid 요청 헤더를 추가하세요.';
 }

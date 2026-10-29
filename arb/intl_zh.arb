@@ -1236,5 +1236,9 @@
   "selectHttpRequestHint": "这里会显示它的请求、响应和耗时",
   "httpConditionShows": "将筛出 {count} 个请求",
   "httpConditionValuesIn": "当前请求里的{field}",
-  "httpConditionTip": "同一字段的条件满足其一即可，不同字段的都要满足。"
+  "httpConditionTip": "同一字段的条件满足其一即可，不同字段的都要满足。",
+  "sendDeviceHeaders": "发送设备 ID (HWID)",
+  "deviceLimitReached": "订阅已达到设备数量上限。请在面板中移除旧设备或联系服务商。",
+  "deviceIdUnsupported": "订阅拒绝了此设备 ID。",
+  "deviceIdNotSent": "订阅需要设备 ID。请开启“发送设备 ID”或添加 x-hwid 请求头。"
 }

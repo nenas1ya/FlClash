@@ -4041,4 +4041,16 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同一字段的条件满足其一即可，不同字段的都要满足。';
+
+  @override
+  String get sendDeviceHeaders => '发送设备 ID (HWID)';
+
+  @override
+  String get deviceLimitReached => '订阅已达到设备数量上限。请在面板中移除旧设备或联系服务商。';
+
+  @override
+  String get deviceIdUnsupported => '订阅拒绝了此设备 ID。';
+
+  @override
+  String get deviceIdNotSent => '订阅需要设备 ID。请开启“发送设备 ID”或添加 x-hwid 请求头。';
 }

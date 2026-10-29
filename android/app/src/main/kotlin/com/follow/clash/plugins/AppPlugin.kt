@@ -196,6 +196,24 @@ class AppPlugin : FlutterPlugin, MethodChannel.MethodCallHandler, ActivityAware 
                 result.success(true)
             }
 
+            "getDeviceIdentity" -> {
+                result.success(
+                    mapOf(
+                        "androidId" to Settings.Secure.getString(
+                            GlobalState.application.contentResolver,
+                            Settings.Secure.ANDROID_ID,
+                        ),
+                        "brand" to Build.BRAND,
+                        "device" to Build.DEVICE,
+                        "hardware" to Build.HARDWARE,
+                        "buildId" to Build.ID,
+                        "manufacturer" to Build.MANUFACTURER,
+                        "model" to Build.MODEL,
+                        "release" to Build.VERSION.RELEASE,
+                    )
+                )
+            }
+
             "getDeviceInfo" -> {
                 result.success(
                     mapOf(

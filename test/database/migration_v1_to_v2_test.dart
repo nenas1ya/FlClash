@@ -1121,6 +1121,26 @@ void main() {
     ]);
   });
 
+  test('opening adds send_device_headers, on for existing profiles', () async {
+    raw.execute('ALTER TABLE profiles DROP COLUMN send_device_headers');
+    raw.execute(
+      'INSERT INTO profiles (id, type, label, url, extend_type, '
+      'auto_update_duration_millis, auto_update, selected_map, unfold_set) '
+      "VALUES (3, 'url', 'Sub', 'https://example.com/sub', 'standard', 0, 0, "
+      "'{}', '[]')",
+    );
+    expect(_columnsOf(raw, 'profiles'), isNot(contains('send_device_headers')));
+
+    final database = await openAndMigrate();
+
+    expect(_columnsOf(raw, 'profiles'), contains('send_device_headers'));
+    expect(_userVersion(raw), 26);
+    expect(
+      (await database.profilesDao.query().get()).single.sendDeviceHeaders,
+      isTrue,
+    );
+  });
+
   test(
     'a v17 user_version with definition already present still opens',
     () async {

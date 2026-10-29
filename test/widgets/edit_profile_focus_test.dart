@@ -188,7 +188,12 @@ void main() {
     );
 
     await tester.enterText(interval, '');
-    await tester.tap(find.byType(Switch));
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(FormRow, currentAppLocalizations.autoUpdate),
+        matching: find.byType(Switch),
+      ),
+    );
     await tester.pump();
     await tester.tap(find.byTooltip('Save'));
     await tester.pump();
@@ -197,6 +202,24 @@ void main() {
     final saved = globalState.container.read(profilesProvider).single;
     expect(saved.autoUpdate, isFalse);
     expect(saved.autoUpdateDuration, profile.autoUpdateDuration);
+  });
+
+  testWidgets('the device ID switch turns off from its row', (tester) async {
+    await pumpEditProfile(tester, profile: _urlProfile());
+    final deviceSwitch = find.descendant(
+      of: find.widgetWithText(
+        FormRow,
+        currentAppLocalizations.sendDeviceHeaders,
+      ),
+      matching: find.byType(Switch),
+    );
+    expect(tester.widget<Switch>(deviceSwitch).value, isTrue);
+
+    await tester.tap(deviceSwitch);
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    expect(tester.widget<Switch>(deviceSwitch).value, isFalse);
   });
 
   testWidgets('only a url profile lists its request headers', (tester) async {
