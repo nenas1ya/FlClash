@@ -964,5 +964,9 @@
   "preferred": "Preferred",
   "addToLocalProxies": "Add to local proxies",
   "addedToLocalProxies": "Added {name} to local proxies",
-  "alreadyInLocalProxies": "{name} is already in local proxies"
+  "alreadyInLocalProxies": "{name} is already in local proxies",
+  "sendDeviceHeaders": "Send device ID (HWID)",
+  "deviceLimitReached": "The subscription has reached its device limit. Remove an old device in the panel or ask your provider.",
+  "deviceIdUnsupported": "The subscription rejected this device ID.",
+  "deviceIdNotSent": "The subscription requires a device ID. Turn on “Send device ID” or add an x-hwid request header."
 }

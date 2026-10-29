@@ -964,5 +964,9 @@
   "preferred": "Préféré",
   "addToLocalProxies": "Ajouter aux proxys locaux",
   "addedToLocalProxies": "{name} ajouté aux proxys locaux",
-  "alreadyInLocalProxies": "{name} est déjà dans les proxys locaux"
+  "alreadyInLocalProxies": "{name} est déjà dans les proxys locaux",
+  "sendDeviceHeaders": "Envoyer l’ID de l’appareil (HWID)",
+  "deviceLimitReached": "L’abonnement a atteint sa limite d’appareils. Supprimez un ancien appareil dans le panneau ou contactez votre fournisseur.",
+  "deviceIdUnsupported": "L’abonnement a refusé l’ID de cet appareil.",
+  "deviceIdNotSent": "L’abonnement exige un ID d’appareil. Activez « Envoyer l’ID de l’appareil » ou ajoutez un en-tête x-hwid."
 }

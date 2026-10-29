@@ -35,6 +35,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
   late final TextEditingController _autoUpdateDurationController;
   late bool _autoUpdate;
   late Map<String, String> _headers;
+  late bool _sendDeviceHeaders;
   Uint8List? _editedData;
   bool _attempted = false;
   final _fileInfoNotifier = ValueNotifier<FileInfo?>(null);
@@ -51,6 +52,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     );
     _autoUpdate = widget.profile.autoUpdate;
     _headers = widget.profile.headers;
+    _sendDeviceHeaders = widget.profile.sendDeviceHeaders;
     _autoUpdateDurationController = TextEditingController(
       text: widget.profile.autoUpdateDuration.inMinutes.toString(),
     );
@@ -134,6 +136,7 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
       url: _urlController.text,
       ageSecretKey: _ageSecretKeyController.text.trim(),
       headers: _headers,
+      sendDeviceHeaders: _sendDeviceHeaders,
       label: _labelController.text,
       autoUpdate: _autoUpdate,
       autoUpdateDuration: interval != null && interval > 0
@@ -145,7 +148,8 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     final hasUpdate =
         current.url != profile.url ||
         current.ageSecretKey != profile.ageSecretKey ||
-        !mapEquals(current.headers, profile.headers);
+        !mapEquals(current.headers, profile.headers) ||
+        current.sendDeviceHeaders != profile.sendDeviceHeaders;
     if (_fileData != null) {
       if (profile.type == ProfileType.url && _autoUpdate) {
         final res = await dialogs.showMessage(
@@ -209,6 +213,13 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
     }
     setState(() {
       _headers = res;
+    });
+  }
+
+  void _setSendDeviceHeaders(bool value) {
+    if (_sendDeviceHeaders == value) return;
+    setState(() {
+      _sendDeviceHeaders = value;
     });
   }
 
@@ -353,6 +364,15 @@ class _EditProfileViewState extends ConsumerState<EditProfileView> {
             _RequestHeadersItem(
               count: _headers.length,
               onPressed: _editHeaders,
+            ),
+          if (isUrl)
+            FormRow(
+              title: appLocalizations.sendDeviceHeaders,
+              onPressed: () => _setSendDeviceHeaders(!_sendDeviceHeaders),
+              trailing: CommonSwitch(
+                value: _sendDeviceHeaders,
+                onChanged: _setSendDeviceHeaders,
+              ),
             ),
         ],
       ),

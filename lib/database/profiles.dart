@@ -19,6 +19,9 @@ class Profiles extends Table {
 
   TextColumn get headers => text().map(const StringMapConverter()).nullable()();
 
+  BoolColumn get sendDeviceHeaders =>
+      boolean().withDefault(const Constant(true))();
+
   DateTimeColumn get lastUpdateDate => dateTime().nullable()();
 
   TextColumn get extendType => textEnum<ExtendType>()();
@@ -172,6 +175,7 @@ extension RawProfilExt on RawProfile {
       url: url,
       ageSecretKey: ageSecretKey ?? '',
       headers: headers ?? const {},
+      sendDeviceHeaders: sendDeviceHeaders,
       lastUpdateDate: lastUpdateDate,
       autoUpdateDuration: Duration(milliseconds: autoUpdateDurationMillis),
       subscriptionInfo: subscriptionInfo,
@@ -197,6 +201,7 @@ extension ProfilesCompanionExt on Profile {
       url: url,
       ageSecretKey: Value(ageSecretKey.isEmpty ? null : ageSecretKey),
       headers: Value(headers.isEmpty ? null : headers),
+      sendDeviceHeaders: Value(sendDeviceHeaders),
       lastUpdateDate: Value(lastUpdateDate),
       autoUpdateDurationMillis: autoUpdateDuration.inMilliseconds,
       subscriptionInfo: Value(subscriptionInfo),

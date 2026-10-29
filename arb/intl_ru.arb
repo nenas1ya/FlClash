@@ -964,5 +964,9 @@
   "preferred": "Предпочтительный",
   "addToLocalProxies": "Добавить в локальные прокси",
   "addedToLocalProxies": "«{name}» добавлен в локальные прокси",
-  "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси"
+  "alreadyInLocalProxies": "«{name}» уже есть в локальных прокси",
+  "sendDeviceHeaders": "Отправлять ID устройства (HWID)",
+  "deviceLimitReached": "Достигнут лимит устройств подписки. Удалите старое устройство в панели или обратитесь к провайдеру.",
+  "deviceIdUnsupported": "Подписка не приняла ID этого устройства.",
+  "deviceIdNotSent": "Подписке нужен ID устройства. Включите «Отправлять ID устройства» или добавьте заголовок x-hwid."
 }

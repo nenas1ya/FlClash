@@ -964,5 +964,9 @@
   "preferred": "優先",
   "addToLocalProxies": "ローカルプロキシに追加",
   "addedToLocalProxies": "{name} をローカルプロキシに追加しました",
-  "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります"
+  "alreadyInLocalProxies": "{name} はすでにローカルプロキシにあります",
+  "sendDeviceHeaders": "デバイス ID (HWID) を送信",
+  "deviceLimitReached": "サブスクリプションのデバイス数が上限に達しました。パネルで古いデバイスを削除するか、プロバイダーに連絡してください。",
+  "deviceIdUnsupported": "サブスクリプションがこのデバイス ID を拒否しました。",
+  "deviceIdNotSent": "サブスクリプションにはデバイス ID が必要です。「デバイス ID を送信」をオンにするか、x-hwid リクエストヘッダーを追加してください。"
 }
