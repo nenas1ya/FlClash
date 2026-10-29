@@ -1042,6 +1042,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "intelligentSelected": MessageLookupByLibrary.simpleMessage(
       "Sélection intelligente",
     ),
+    "intelligentSelectedRussian": MessageLookupByLibrary.simpleMessage(
+      "Sélection intelligente (applis russes)",
+    ),
     "interfaceName": MessageLookupByLibrary.simpleMessage("Nom de l’interface"),
     "interfaceNameDesc": MessageLookupByLibrary.simpleMessage(
       "Le nom de l’interface est l’interface réseau utilisée par les connexions sortantes.",
