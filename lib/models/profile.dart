@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/device_identity.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -70,6 +71,7 @@ abstract class Profile with _$Profile {
     @Default('') String url,
     @Default('') String ageSecretKey,
     @Default({}) Map<String, String> headers,
+    @Default(true) bool sendDeviceHeaders,
     DateTime? lastUpdateDate,
     required Duration autoUpdateDuration,
     SubscriptionInfo? subscriptionInfo,
@@ -183,8 +185,25 @@ extension ProfileExtension on Profile {
     return _getFile();
   }
 
-  Future<Profile> update({required ValidateConfig validate}) async {
-    final response = await request.getFileResponseForUrl(url, headers: headers);
+  Future<Profile> update({
+    required ValidateConfig validate,
+    DeviceHeaders? deviceHeaders,
+  }) async {
+    final device = sendDeviceHeaders
+        ? await (deviceHeaders ?? deviceIdentity.headers)()
+        : const <String, String>{};
+    final sent = subscriptionRequestHeaders(device: device, custom: headers);
+    final response = await request.getFileResponseForUrl(url, headers: sent);
+    final rejection = deviceRejectionOf(response.headers.value);
+    if (rejection != null) {
+      throw MessageException(
+        deviceRejectionMessage(
+          rejection,
+          hwidSent: sent.keys.any((key) => key.toLowerCase() == hwidHeader),
+          announce: decodeAnnounce(response.headers.value(announceHeader)),
+        ),
+      );
+    }
     final disposition = response.headers.value('content-disposition');
     final userinfo = response.headers.value('subscription-userinfo');
     return copyWith(

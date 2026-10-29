@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:ui' show Locale;
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/device_identity.dart';
+import 'package:fl_clash/l10n/l10n.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/state.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -84,6 +87,7 @@ void main() {
   group('Profile.update', () {
     late HttpServer server;
     late HttpHeaders received;
+    late Map<String, String> replyHeaders;
 
     setUp(() async {
       globalState.packageInfo = PackageInfo(
@@ -100,8 +104,10 @@ void main() {
       addTearDown(() => HttpOverrides.global = bindingOverrides);
       server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
       addTearDown(() => server.close(force: true));
+      replyHeaders = {};
       server.listen((request) async {
         received = request.headers;
+        replyHeaders.forEach(request.response.headers.set);
         request.response.write('proxies: []');
         await request.response.close();
       });
@@ -116,6 +122,64 @@ void main() {
 
       expect(received.value('x-hwid'), 'abc123');
       expect(received.value(HttpHeaders.userAgentHeader), 'client/1.0');
+    });
+
+    test('sends the device headers under the profile ones', () async {
+      final profile = Profile.normal(
+        url: 'http://127.0.0.1:${server.port}/sub',
+      ).copyWith(headers: {'X-HWID': 'mine'});
+
+      await profile.update(
+        validate: (_, _) async => '',
+        deviceHeaders: () async => {hwidHeader: 'DEVICE', deviceOsHeader: 'Linux'},
+      );
+
+      expect(received.value(hwidHeader), 'mine');
+      expect(received.value(deviceOsHeader), 'Linux');
+    });
+
+    test('sends no device headers when the profile turns them off', () async {
+      final profile = Profile.normal(
+        url: 'http://127.0.0.1:${server.port}/sub',
+      ).copyWith(sendDeviceHeaders: false);
+
+      await profile.update(
+        validate: (_, _) async => '',
+        deviceHeaders: () async => {hwidHeader: 'DEVICE'},
+      );
+
+      expect(received.value(hwidHeader), isNull);
+    });
+
+    test('a device limit fails the update and keeps the saved file', () async {
+      await AppLocalizations.load(const Locale('en'));
+      final profile = Profile.normal(
+        url: 'http://127.0.0.1:${server.port}/sub',
+      );
+      final savedFile = await profile.file;
+      await savedFile.writeAsString('proxies: [kept]');
+      replyHeaders = {
+        deviceLimitReachedHeader: 'true',
+        announceHeader: 'base64:${base64.encode(utf8.encode('Remove a device'))}',
+      };
+
+      await expectLater(
+        profile.update(
+          validate: (_, _) async => '',
+          deviceHeaders: () async => {hwidHeader: 'DEVICE'},
+        ),
+        throwsA(
+          isA<MessageException>().having(
+            (e) => e.message,
+            'message',
+            allOf(
+              contains(currentAppLocalizations.deviceLimitReached),
+              contains('Remove a device'),
+            ),
+          ),
+        ),
+      );
+      expect(await savedFile.readAsString(), 'proxies: [kept]');
     });
 
     test('URL credentials win over an Authorization header', () async {
