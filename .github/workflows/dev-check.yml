@@ -1,0 +1,77 @@
+name: dev-check
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Patch branch to regenerate and check'
+        required: true
+      codegen:
+        description: 'Run build_runner and intl_utils, push the result'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: dev-check-${{ inputs.branch }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          submodules: true
+          fetch-depth: 0
+
+      - id: toolchain
+        run: echo "flutter=$(yq '.env.FLUTTER_VERSION' .github/workflows/build.yaml)" >> "$GITHUB_OUTPUT"
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: plugins/rust_api/rust
+          cache-directories: .dart_tool/hooks_runner
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ steps.toolchain.outputs.flutter }}
+          cache: true
+
+      - run: flutter pub get
+
+      - name: Generate
+        if: inputs.codegen
+        env:
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          dart run build_runner build --delete-conflicting-outputs
+          dart run intl_utils:generate
+          dart format lib test
+          if [ -n "$(git status --porcelain -- lib test arb)" ]; then
+            git config user.name 'hwid-bot'
+            git config user.email 'hwid-bot@users.noreply.github.com'
+            git add lib test arb
+            git commit -m 'chore: regenerate code'
+            git push origin "HEAD:$BRANCH"
+          fi
+
+      - name: Check format
+        run: dart format --output=none --set-exit-if-changed lib test tool plugins setup.dart
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Skip the Go core build hook
+        run: yq -i '.hooks.user_defines.setup.build_assets = false' pubspec.yaml
+
+      - name: Run tests
+        run: dart run tool/test.dart -- --reporter expanded --coverage
+
+      - name: Check coverage
+        continue-on-error: true
+        run: dart run tool/check_coverage.dart coverage/lcov.info 75
