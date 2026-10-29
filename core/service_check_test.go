@@ -414,3 +414,15 @@ func TestTraceValue(t *testing.T) {
 		t.Errorf("colo = %q, want empty", got)
 	}
 }
+
+func TestRussianServicesAreRegistered(t *testing.T) {
+	names := map[string]bool{}
+	for _, checker := range serviceCheckers {
+		names[checker.name] = true
+	}
+	for _, name := range []string{"gosuslugi", "sberbank", "vk", "yandex", "kinopoisk"} {
+		if !names[name] {
+			t.Errorf("no checker registered for %s", name)
+		}
+	}
+}
