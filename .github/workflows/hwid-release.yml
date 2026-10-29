@@ -25,6 +25,9 @@ env:
   SUFFIX: -hwid
   PATCHES: |
     required feat/profile-request-headers
+    optional feat/device-identity
+    optional feat/ru-services
+    optional feat/ru-apps
 
 jobs:
   check:
