@@ -287,6 +287,7 @@
   "source": "Источник",
   "action": "Действие",
   "intelligentSelected": "Умный выбор",
+  "intelligentSelectedRussian": "Умный выбор (российские приложения)",
   "clipboardImport": "Импорт из буфера обмена",
   "clipboardNoPackageNames": "В буфере обмена нет допустимых имён пакетов",
   "clipboardExport": "Экспорт в буфер обмена",

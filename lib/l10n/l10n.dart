@@ -1836,6 +1836,12 @@ abstract class AppLocalizations {
   /// **'Smart selection'**
   String get intelligentSelected;
 
+  /// No description provided for @intelligentSelectedRussian.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart select (Russian apps)'**
+  String get intelligentSelectedRussian;
+
   /// No description provided for @clipboardImport.
   ///
   /// In en, this message translates to:

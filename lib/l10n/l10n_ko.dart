@@ -901,6 +901,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get intelligentSelected => '스마트 선택';
 
   @override
+  String get intelligentSelectedRussian => '스마트 선택(러시아 앱)';
+
+  @override
   String get clipboardImport => '클립보드에서 가져오기';
 
   @override

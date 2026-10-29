@@ -928,6 +928,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get intelligentSelected => 'Smart selection';
 
   @override
+  String get intelligentSelectedRussian => 'Smart select (Russian apps)';
+
+  @override
   String get clipboardImport => 'Import from clipboard';
 
   @override

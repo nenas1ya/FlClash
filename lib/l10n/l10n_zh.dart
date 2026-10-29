@@ -897,6 +897,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get intelligentSelected => '智能选择';
 
   @override
+  String get intelligentSelectedRussian => '智能选择（俄罗斯应用）';
+
+  @override
   String get clipboardImport => '剪贴板导入';
 
   @override

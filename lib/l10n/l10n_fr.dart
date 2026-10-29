@@ -939,6 +939,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get intelligentSelected => 'Sélection intelligente';
 
   @override
+  String get intelligentSelectedRussian =>
+      'Sélection intelligente (applis russes)';
+
+  @override
   String get clipboardImport => 'Importer depuis le presse-papiers';
 
   @override

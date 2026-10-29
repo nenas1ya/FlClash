@@ -928,6 +928,10 @@ class AppLocalizationsRu extends AppLocalizations {
   String get intelligentSelected => 'Умный выбор';
 
   @override
+  String get intelligentSelectedRussian =>
+      'Умный выбор (российские приложения)';
+
+  @override
   String get clipboardImport => 'Импорт из буфера обмена';
 
   @override

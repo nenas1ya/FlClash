@@ -901,6 +901,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get intelligentSelected => 'スマート選択';
 
   @override
+  String get intelligentSelectedRussian => 'スマート選択（ロシアのアプリ）';
+
+  @override
   String get clipboardImport => 'クリップボードからインポート';
 
   @override

@@ -940,6 +940,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get intelligentSelected => 'Selección inteligente';
 
   @override
+  String get intelligentSelectedRussian => 'Selección inteligente (apps rusas)';
+
+  @override
   String get clipboardImport => 'Importar desde el portapapeles';
 
   @override
