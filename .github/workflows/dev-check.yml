@@ -75,3 +75,34 @@ jobs:
       - name: Check coverage
         continue-on-error: true
         run: dart run tool/check_coverage.dart coverage/lcov.info 75
+
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+          submodules: recursive
+
+      - id: toolchain
+        run: echo "go=$(yq '.env.GO_VERSION' .github/workflows/build.yaml)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ steps.toolchain.outputs.go }}
+          cache-dependency-path: core/go.sum
+
+      - name: Go core
+        working-directory: core
+        env:
+          CGO_ENABLED: 0
+        run: |
+          test -z "$(gofmt -l ./*.go ./cmd ./mobile ./platform ./tun)" || {
+            gofmt -l ./*.go ./cmd ./mobile ./platform ./tun >&2
+            exit 1
+          }
+          go test -count=1 .
+          go vet . ./cmd/...
+          GOOS=linux go vet ./platform
+          tags="$(sed -n 's/^tags: *//p' ../build_config.yaml)"
+          GOOS=android GOARCH=arm64 go vet "-tags=$tags" . ./mobile ./tun ./platform
