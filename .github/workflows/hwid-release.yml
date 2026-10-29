@@ -1,0 +1,226 @@
+name: hwid-release
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Upstream tag (empty = latest stable)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hwid-release
+  cancel-in-progress: false
+
+env:
+  UPSTREAM: chen08209/FlClash
+  SUFFIX: -hwid
+  PATCHES: |
+    required feat/profile-request-headers
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.pick.outputs.tag }}
+      build: ${{ steps.pick.outputs.build }}
+      android: ${{ steps.pick.outputs.android }}
+    steps:
+      - id: pick
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+          HAS_KEYSTORE: ${{ secrets.KEYSTORE != '' }}
+        run: |
+          tag="${INPUT_TAG:-$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)}"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "android=$HAS_KEYSTORE" >> "$GITHUB_OUTPUT"
+          if gh release view "$tag$SUFFIX" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "build=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "build=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    needs: check
+    if: needs.check.outputs.build == 'true'
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: windows
+            os: windows-2022
+          - platform: android
+            os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    env:
+      TAG: ${{ needs.check.outputs.tag }}
+      ENABLED: ${{ matrix.platform != 'android' || needs.check.outputs.android == 'true' }}
+    steps:
+      - if: env.ENABLED == 'true' && matrix.platform == 'windows'
+        run: git config --global core.longpaths true
+
+      - if: env.ENABLED == 'true'
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.UPSTREAM }}
+          ref: ${{ needs.check.outputs.tag }}
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Apply patches
+        if: env.ENABLED == 'true'
+        run: |
+          git config user.name 'hwid-bot'
+          git config user.email 'hwid-bot@users.noreply.github.com'
+          git fetch -q "https://github.com/$UPSTREAM.git" main:upstream-main
+          notes="$RUNNER_TEMP/patches.md"
+          : > "$notes"
+          while read -r kind branch; do
+            [ -n "$branch" ] || continue
+            git fetch -q "https://github.com/$GITHUB_REPOSITORY.git" "$branch:p/$branch"
+            sha=$(git rev-parse --short "p/$branch")
+            base=$(git merge-base "p/$branch" upstream-main)
+            if git cherry-pick $(git rev-list --reverse "$base..p/$branch"); then
+              echo "- applied: \`$branch\` @ $sha" >> "$notes"
+            elif [ "$kind" = required ]; then
+              git cherry-pick --abort || true
+              echo "::error::required patch $branch does not apply to $TAG"
+              exit 1
+            else
+              git cherry-pick --abort || true
+              echo "::warning::optional patch $branch skipped: conflicts with $TAG"
+              echo "- **skipped (conflict):** \`$branch\` @ $sha" >> "$notes"
+            fi
+          done <<< "$PATCHES"
+          cat "$notes"
+
+      - name: Read upstream toolchain
+        if: env.ENABLED == 'true'
+        run: |
+          wf=.github/workflows/build.yaml
+          ca='.jobs.build.steps[] | select(.name == "Fetch CA certificates") | .env'
+          {
+            echo "FLUTTER_VERSION=$(yq '.env.FLUTTER_VERSION' $wf)"
+            echo "GO_VERSION=$(yq '.env.GO_VERSION' $wf)"
+            echo "NDK_VERSION=$(yq '.env.NDK_VERSION' $wf)"
+            echo "CA_BUNDLE=$(yq "$ca.CA_BUNDLE" $wf)"
+            echo "CA_BUNDLE_SHA256=$(yq "$ca.CA_BUNDLE_SHA256" $wf)"
+          } >> "$GITHUB_ENV"
+
+      - name: Setup Android signing
+        if: env.ENABLED == 'true' && matrix.platform == 'android'
+        env:
+          KEYSTORE: ${{ secrets.KEYSTORE }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE" | base64 --decode > android/app/keystore.jks
+          {
+            echo "keyAlias=$KEY_ALIAS"
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyPassword=$KEY_PASSWORD"
+          } >> android/local.properties
+
+      - if: env.ENABLED == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache-dependency-path: core/go.sum
+
+      - if: env.ENABLED == 'true' && matrix.platform == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - if: env.ENABLED == 'true' && matrix.platform == 'android'
+        uses: gradle/actions/setup-gradle@v6
+
+      - if: env.ENABLED == 'true'
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - if: env.ENABLED == 'true' && matrix.platform == 'android'
+        id: ndk
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: ${{ env.NDK_VERSION }}
+          add-to-path: true
+          link-to-sdk: true
+
+      - if: env.ENABLED == 'true'
+        run: flutter pub get
+
+      - name: Fetch CA certificates
+        if: env.ENABLED == 'true'
+        run: |
+          bundle=core/Clash.Meta/component/ca/ca-certificates.crt
+          curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
+          echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
+
+      - name: Build
+        if: env.ENABLED == 'true'
+        env:
+          ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
+        run: dart setup.dart ${{ matrix.platform }} --env stable -v
+
+      - if: env.ENABLED == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.platform }}
+          path: ./dist
+
+      - if: env.ENABLED == 'true' && matrix.platform == 'windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: patches
+          path: ${{ runner.temp }}/patches.md
+
+  publish:
+    needs: [check, build]
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.check.outputs.tag }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: dist-*
+          merge-multiple: true
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: patches
+          path: meta
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          {
+            echo "Upstream \`$UPSTREAM@$TAG\`"
+            echo
+            cat meta/patches.md
+            echo
+            echo "Built by $RUN_URL"
+          } > notes.md
+          cd dist
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+          gh release create "$TAG$SUFFIX" * \
+            -R "$GITHUB_REPOSITORY" \
+            --target "${{ github.event.repository.default_branch }}" \
+            --title "FlClash ${TAG#v} + patches" \
+            --notes-file ../notes.md
