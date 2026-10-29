@@ -220,6 +220,7 @@
   "source": "Source",
   "action": "Action",
   "intelligentSelected": "Sélection intelligente",
+  "intelligentSelectedRussian": "Sélection intelligente (applis russes)",
   "clipboardImport": "Importer depuis le presse-papiers",
   "clipboardExport": "Exporter vers le presse-papiers",
   "layout": "Disposition",
