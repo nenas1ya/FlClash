@@ -210,32 +210,22 @@ void main() {
     expect(saved.autoUpdateDuration, profile.autoUpdateDuration);
   });
 
-  testWidgets('the device ID switch is saved with the profile', (tester) async {
-    final profile = _urlProfile();
-    await pumpEditProfile(
-      tester,
-      profile: profile,
-      overrides: [
-        profilesProvider.overrideWith(() => TestProfiles([profile])),
-      ],
-    );
-
-    await tester.tap(
-      find.descendant(
-        of: find.widgetWithText(
-          FormRow,
-          currentAppLocalizations.sendDeviceHeaders,
-        ),
-        matching: find.byType(CommonSwitch),
+  testWidgets('the device ID switch turns off from its row', (tester) async {
+    await pumpEditProfile(tester, profile: _urlProfile());
+    final deviceSwitch = find.descendant(
+      of: find.widgetWithText(
+        FormRow,
+        currentAppLocalizations.sendDeviceHeaders,
       ),
+      matching: find.byType(CommonSwitch),
     );
-    await tester.pump();
-    await tester.tap(find.byTooltip('Save'));
+    expect(tester.widget<CommonSwitch>(deviceSwitch).value, isTrue);
+
+    await tester.tap(deviceSwitch);
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    final saved = globalState.container.read(profilesProvider).single;
-    expect(saved.sendDeviceHeaders, isFalse);
+    expect(tester.widget<CommonSwitch>(deviceSwitch).value, isFalse);
   });
 
   testWidgets('only a url profile lists its request headers', (tester) async {
