@@ -220,6 +220,7 @@
   "source": "소스",
   "action": "동작",
   "intelligentSelected": "스마트 선택",
+  "intelligentSelectedRussian": "스마트 선택(러시아 앱)",
   "clipboardImport": "클립보드에서 가져오기",
   "clipboardExport": "클립보드로 내보내기",
   "layout": "레이아웃",

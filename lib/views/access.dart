@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/russian_packages.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:fl_clash/plugins/app.dart';
@@ -161,6 +162,29 @@ class _AccessViewState extends ConsumerState<AccessView>
         );
   }
 
+  void _russianSelected() {
+    final packageNames = ref.read(
+      packagesProvider.select((state) => state.map((item) => item.packageName)),
+    );
+    if (packageNames.isEmpty) {
+      return;
+    }
+    ref
+        .read(accessControlStateProvider.notifier)
+        .update(
+          (state) => state.copyWith(
+            acceptList: [
+              for (final name in packageNames)
+                if (!isRussianPackage(name)) name,
+            ],
+            rejectList: [
+              for (final name in packageNames)
+                if (isRussianPackage(name)) name,
+            ],
+          ),
+        );
+  }
+
   void _handleSelected(String packageName) {
     ref.read(accessControlStateProvider.notifier).update((state) {
       final newSet = Set<String>.from(state.currentList)
@@ -317,6 +341,11 @@ class _AccessViewState extends ConsumerState<AccessView>
             glyph: AppGlyphs.sparkle,
             label: appLocalizations.intelligentSelected,
             onPressed: _intelligentSelected,
+          ),
+          CommonPopupMenuItem(
+            glyph: AppGlyphs.sparkle,
+            label: appLocalizations.intelligentSelectedRussian,
+            onPressed: _russianSelected,
           ),
           CommonPopupMenuItem(
             glyph: AppGlyphs.copy,

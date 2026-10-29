@@ -220,6 +220,7 @@
   "source": "Source",
   "action": "Action",
   "intelligentSelected": "Smart selection",
+  "intelligentSelectedRussian": "Smart select (Russian apps)",
   "clipboardImport": "Import from clipboard",
   "clipboardExport": "Export to clipboard",
   "layout": "Layout",

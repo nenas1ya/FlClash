@@ -220,6 +220,7 @@
   "source": "Источник",
   "action": "Действие",
   "intelligentSelected": "Умный выбор",
+  "intelligentSelectedRussian": "Умный выбор (российские приложения)",
   "clipboardImport": "Импорт из буфера обмена",
   "clipboardExport": "Экспорт в буфер обмена",
   "layout": "Макет",
