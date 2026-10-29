@@ -194,7 +194,12 @@ void main() {
     );
 
     await tester.enterText(interval, '');
-    await tester.tap(find.byType(CommonSwitch));
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(FormRow, currentAppLocalizations.autoUpdate),
+        matching: find.byType(CommonSwitch),
+      ),
+    );
     await tester.pump();
     await tester.tap(find.byTooltip('Save'));
     await tester.pump();
@@ -203,6 +208,34 @@ void main() {
     final saved = globalState.container.read(profilesProvider).single;
     expect(saved.autoUpdate, isFalse);
     expect(saved.autoUpdateDuration, profile.autoUpdateDuration);
+  });
+
+  testWidgets('the device ID switch is saved with the profile', (tester) async {
+    final profile = _urlProfile();
+    await pumpEditProfile(
+      tester,
+      profile: profile,
+      overrides: [
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
+      ],
+    );
+
+    await tester.tap(
+      find.descendant(
+        of: find.widgetWithText(
+          FormRow,
+          currentAppLocalizations.sendDeviceHeaders,
+        ),
+        matching: find.byType(CommonSwitch),
+      ),
+    );
+    await tester.pump();
+    await tester.tap(find.byTooltip('Save'));
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+    final saved = globalState.container.read(profilesProvider).single;
+    expect(saved.sendDeviceHeaders, isFalse);
   });
 
   testWidgets('only a url profile lists its request headers', (tester) async {
