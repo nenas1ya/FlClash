@@ -1019,6 +1019,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Установленные шрифты",
     ),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("Умный выбор"),
+    "intelligentSelectedRussian": MessageLookupByLibrary.simpleMessage(
+      "Умный выбор (российские приложения)",
+    ),
     "interfaceName": MessageLookupByLibrary.simpleMessage("Имя интерфейса"),
     "interfaceNameDesc": MessageLookupByLibrary.simpleMessage(
       "Имя интерфейса задаёт сетевой интерфейс для исходящих соединений.",

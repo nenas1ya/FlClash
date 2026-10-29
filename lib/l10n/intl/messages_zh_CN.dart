@@ -767,6 +767,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "installedFonts": MessageLookupByLibrary.simpleMessage("已安装字体"),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("智能选择"),
+    "intelligentSelectedRussian": MessageLookupByLibrary.simpleMessage(
+      "智能选择（俄罗斯应用）",
+    ),
     "interfaceName": MessageLookupByLibrary.simpleMessage("网卡名称"),
     "interfaceNameDesc": MessageLookupByLibrary.simpleMessage(
       "网卡名称为出站连接使用的网卡。",

@@ -840,6 +840,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "installedFonts": MessageLookupByLibrary.simpleMessage("インストール済みのフォント"),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("スマート選択"),
+    "intelligentSelectedRussian": MessageLookupByLibrary.simpleMessage(
+      "スマート選択（ロシアのアプリ）",
+    ),
     "interfaceName": MessageLookupByLibrary.simpleMessage("インターフェース名"),
     "interfaceNameDesc": MessageLookupByLibrary.simpleMessage(
       "インターフェース名は、アウトバウンド接続に使用するネットワークインターフェースです。",

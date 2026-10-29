@@ -829,6 +829,9 @@ class MessageLookup extends MessageLookupByLibrary {
     ),
     "installedFonts": MessageLookupByLibrary.simpleMessage("설치된 글꼴"),
     "intelligentSelected": MessageLookupByLibrary.simpleMessage("스마트 선택"),
+    "intelligentSelectedRussian": MessageLookupByLibrary.simpleMessage(
+      "스마트 선택(러시아 앱)",
+    ),
     "interfaceName": MessageLookupByLibrary.simpleMessage("인터페이스 이름"),
     "interfaceNameDesc": MessageLookupByLibrary.simpleMessage(
       "인터페이스 이름은 아웃바운드 연결이 사용하는 네트워크 인터페이스입니다.",

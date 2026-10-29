@@ -1716,6 +1716,16 @@ class AppLocalizations {
     );
   }
 
+  /// `Smart select (Russian apps)`
+  String get intelligentSelectedRussian {
+    return Intl.message(
+      'Smart select (Russian apps)',
+      name: 'intelligentSelectedRussian',
+      desc: '',
+      args: [],
+    );
+  }
+
   /// `Import from clipboard`
   String get clipboardImport {
     return Intl.message(
