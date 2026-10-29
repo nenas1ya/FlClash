@@ -521,6 +521,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage(
       "開発者モードが有効になりました。",
     ),
+    "deviceIdNotSent": MessageLookupByLibrary.simpleMessage(
+      "サブスクリプションにはデバイス ID が必要です。「デバイス ID を送信」をオンにするか、x-hwid リクエストヘッダーを追加してください。",
+    ),
+    "deviceIdUnsupported": MessageLookupByLibrary.simpleMessage(
+      "サブスクリプションがこのデバイス ID を拒否しました。",
+    ),
+    "deviceLimitReached": MessageLookupByLibrary.simpleMessage(
+      "サブスクリプションのデバイス数が上限に達しました。パネルで古いデバイスを削除するか、プロバイダーに連絡してください。",
+    ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("ダイヤラープロキシ"),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "ダイヤラープロキシは NTP サーバーへの接続に使用するアウトバウンドです。",
@@ -1414,6 +1423,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "振り分け戦略を選択してください",
     ),
     "send": MessageLookupByLibrary.simpleMessage("送信"),
+    "sendDeviceHeaders": MessageLookupByLibrary.simpleMessage(
+      "デバイス ID (HWID) を送信",
+    ),
     "sendFromPhone": MessageLookupByLibrary.simpleMessage("スマートフォンから送信"),
     "sendFromPhoneConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "スマートフォンから届いたリンクをインポートしますか？",

@@ -76,6 +76,21 @@ class $ProfilesTable extends Profiles
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   ).withConverter<Map<String, String>?>($ProfilesTable.$converterheadersn);
+  static const VerificationMeta _sendDeviceHeadersMeta = const VerificationMeta(
+    'sendDeviceHeaders',
+  );
+  @override
+  late final GeneratedColumn<bool> sendDeviceHeaders = GeneratedColumn<bool>(
+    'send_device_headers',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("send_device_headers" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   static const VerificationMeta _lastUpdateDateMeta = const VerificationMeta(
     'lastUpdateDate',
   );
@@ -198,6 +213,7 @@ class $ProfilesTable extends Profiles
     url,
     ageSecretKey,
     headers,
+    sendDeviceHeaders,
     lastUpdateDate,
     extendType,
     scriptId,
@@ -256,6 +272,15 @@ class $ProfilesTable extends Profiles
         ageSecretKey.isAcceptableOrUnknown(
           data['age_secret_key']!,
           _ageSecretKeyMeta,
+        ),
+      );
+    }
+    if (data.containsKey('send_device_headers')) {
+      context.handle(
+        _sendDeviceHeadersMeta,
+        sendDeviceHeaders.isAcceptableOrUnknown(
+          data['send_device_headers']!,
+          _sendDeviceHeadersMeta,
         ),
       );
     }
@@ -349,6 +374,10 @@ class $ProfilesTable extends Profiles
           data['${effectivePrefix}headers'],
         ),
       ),
+      sendDeviceHeaders: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}send_device_headers'],
+      )!,
       lastUpdateDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_update_date'],
@@ -437,6 +466,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
   final String url;
   final String? ageSecretKey;
   final Map<String, String>? headers;
+  final bool sendDeviceHeaders;
   final DateTime? lastUpdateDate;
   final ExtendType extendType;
   final int? scriptId;
@@ -456,6 +486,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     required this.url,
     this.ageSecretKey,
     this.headers,
+    required this.sendDeviceHeaders,
     this.lastUpdateDate,
     required this.extendType,
     this.scriptId,
@@ -488,6 +519,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
         $ProfilesTable.$converterheadersn.toSql(headers),
       );
     }
+    map['send_device_headers'] = Variable<bool>(sendDeviceHeaders);
     if (!nullToAbsent || lastUpdateDate != null) {
       map['last_update_date'] = Variable<DateTime>(lastUpdateDate);
     }
@@ -547,6 +579,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       headers: headers == null && nullToAbsent
           ? const Value.absent()
           : Value(headers),
+      sendDeviceHeaders: Value(sendDeviceHeaders),
       lastUpdateDate: lastUpdateDate == null && nullToAbsent
           ? const Value.absent()
           : Value(lastUpdateDate),
@@ -588,6 +621,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       url: serializer.fromJson<String>(json['url']),
       ageSecretKey: serializer.fromJson<String?>(json['ageSecretKey']),
       headers: serializer.fromJson<Map<String, String>?>(json['headers']),
+      sendDeviceHeaders: serializer.fromJson<bool>(json['sendDeviceHeaders']),
       lastUpdateDate: serializer.fromJson<DateTime?>(json['lastUpdateDate']),
       extendType: $ProfilesTable.$converterextendType.fromJson(
         serializer.fromJson<String>(json['extendType']),
@@ -622,6 +656,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
       'url': serializer.toJson<String>(url),
       'ageSecretKey': serializer.toJson<String?>(ageSecretKey),
       'headers': serializer.toJson<Map<String, String>?>(headers),
+      'sendDeviceHeaders': serializer.toJson<bool>(sendDeviceHeaders),
       'lastUpdateDate': serializer.toJson<DateTime?>(lastUpdateDate),
       'extendType': serializer.toJson<String>(
         $ProfilesTable.$converterextendType.toJson(extendType),
@@ -650,6 +685,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     String? url,
     Value<String?> ageSecretKey = const Value.absent(),
     Value<Map<String, String>?> headers = const Value.absent(),
+    bool? sendDeviceHeaders,
     Value<DateTime?> lastUpdateDate = const Value.absent(),
     ExtendType? extendType,
     Value<int?> scriptId = const Value.absent(),
@@ -671,6 +707,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     url: url ?? this.url,
     ageSecretKey: ageSecretKey.present ? ageSecretKey.value : this.ageSecretKey,
     headers: headers.present ? headers.value : this.headers,
+    sendDeviceHeaders: sendDeviceHeaders ?? this.sendDeviceHeaders,
     lastUpdateDate: lastUpdateDate.present
         ? lastUpdateDate.value
         : this.lastUpdateDate,
@@ -701,6 +738,9 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
           ? data.ageSecretKey.value
           : this.ageSecretKey,
       headers: data.headers.present ? data.headers.value : this.headers,
+      sendDeviceHeaders: data.sendDeviceHeaders.present
+          ? data.sendDeviceHeaders.value
+          : this.sendDeviceHeaders,
       lastUpdateDate: data.lastUpdateDate.present
           ? data.lastUpdateDate.value
           : this.lastUpdateDate,
@@ -739,6 +779,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
           ..write('url: $url, ')
           ..write('ageSecretKey: $ageSecretKey, ')
           ..write('headers: $headers, ')
+          ..write('sendDeviceHeaders: $sendDeviceHeaders, ')
           ..write('lastUpdateDate: $lastUpdateDate, ')
           ..write('extendType: $extendType, ')
           ..write('scriptId: $scriptId, ')
@@ -763,6 +804,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
     url,
     ageSecretKey,
     headers,
+    sendDeviceHeaders,
     lastUpdateDate,
     extendType,
     scriptId,
@@ -786,6 +828,7 @@ class RawProfile extends DataClass implements Insertable<RawProfile> {
           other.url == this.url &&
           other.ageSecretKey == this.ageSecretKey &&
           other.headers == this.headers &&
+          other.sendDeviceHeaders == this.sendDeviceHeaders &&
           other.lastUpdateDate == this.lastUpdateDate &&
           other.extendType == this.extendType &&
           other.scriptId == this.scriptId &&
@@ -807,6 +850,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
   final Value<String> url;
   final Value<String?> ageSecretKey;
   final Value<Map<String, String>?> headers;
+  final Value<bool> sendDeviceHeaders;
   final Value<DateTime?> lastUpdateDate;
   final Value<ExtendType> extendType;
   final Value<int?> scriptId;
@@ -826,6 +870,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     this.url = const Value.absent(),
     this.ageSecretKey = const Value.absent(),
     this.headers = const Value.absent(),
+    this.sendDeviceHeaders = const Value.absent(),
     this.lastUpdateDate = const Value.absent(),
     this.extendType = const Value.absent(),
     this.scriptId = const Value.absent(),
@@ -846,6 +891,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     required String url,
     this.ageSecretKey = const Value.absent(),
     this.headers = const Value.absent(),
+    this.sendDeviceHeaders = const Value.absent(),
     this.lastUpdateDate = const Value.absent(),
     required ExtendType extendType,
     this.scriptId = const Value.absent(),
@@ -873,6 +919,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     Expression<String>? url,
     Expression<String>? ageSecretKey,
     Expression<String>? headers,
+    Expression<bool>? sendDeviceHeaders,
     Expression<DateTime>? lastUpdateDate,
     Expression<String>? extendType,
     Expression<int>? scriptId,
@@ -893,6 +940,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
       if (url != null) 'url': url,
       if (ageSecretKey != null) 'age_secret_key': ageSecretKey,
       if (headers != null) 'headers': headers,
+      if (sendDeviceHeaders != null) 'send_device_headers': sendDeviceHeaders,
       if (lastUpdateDate != null) 'last_update_date': lastUpdateDate,
       if (extendType != null) 'extend_type': extendType,
       if (scriptId != null) 'script_id': scriptId,
@@ -916,6 +964,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
     Value<String>? url,
     Value<String?>? ageSecretKey,
     Value<Map<String, String>?>? headers,
+    Value<bool>? sendDeviceHeaders,
     Value<DateTime?>? lastUpdateDate,
     Value<ExtendType>? extendType,
     Value<int?>? scriptId,
@@ -936,6 +985,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
       url: url ?? this.url,
       ageSecretKey: ageSecretKey ?? this.ageSecretKey,
       headers: headers ?? this.headers,
+      sendDeviceHeaders: sendDeviceHeaders ?? this.sendDeviceHeaders,
       lastUpdateDate: lastUpdateDate ?? this.lastUpdateDate,
       extendType: extendType ?? this.extendType,
       scriptId: scriptId ?? this.scriptId,
@@ -978,6 +1028,9 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
       map['headers'] = Variable<String>(
         $ProfilesTable.$converterheadersn.toSql(headers.value),
       );
+    }
+    if (sendDeviceHeaders.present) {
+      map['send_device_headers'] = Variable<bool>(sendDeviceHeaders.value);
     }
     if (lastUpdateDate.present) {
       map['last_update_date'] = Variable<DateTime>(lastUpdateDate.value);
@@ -1037,6 +1090,7 @@ class ProfilesCompanion extends UpdateCompanion<RawProfile> {
           ..write('url: $url, ')
           ..write('ageSecretKey: $ageSecretKey, ')
           ..write('headers: $headers, ')
+          ..write('sendDeviceHeaders: $sendDeviceHeaders, ')
           ..write('lastUpdateDate: $lastUpdateDate, ')
           ..write('extendType: $extendType, ')
           ..write('scriptId: $scriptId, ')
@@ -4771,6 +4825,7 @@ typedef $$ProfilesTableCreateCompanionBuilder =
       required String url,
       Value<String?> ageSecretKey,
       Value<Map<String, String>?> headers,
+      Value<bool> sendDeviceHeaders,
       Value<DateTime?> lastUpdateDate,
       required ExtendType extendType,
       Value<int?> scriptId,
@@ -4792,6 +4847,7 @@ typedef $$ProfilesTableUpdateCompanionBuilder =
       Value<String> url,
       Value<String?> ageSecretKey,
       Value<Map<String, String>?> headers,
+      Value<bool> sendDeviceHeaders,
       Value<DateTime?> lastUpdateDate,
       Value<ExtendType> extendType,
       Value<int?> scriptId,
@@ -4931,6 +4987,11 @@ class $$ProfilesTableFilterComposer
   get headers => $composableBuilder(
     column: $table.headers,
     builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<bool> get sendDeviceHeaders => $composableBuilder(
+    column: $table.sendDeviceHeaders,
+    builder: (column) => ColumnFilters(column),
   );
 
   ColumnFilters<DateTime> get lastUpdateDate => $composableBuilder(
@@ -5142,6 +5203,11 @@ class $$ProfilesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get sendDeviceHeaders => $composableBuilder(
+    column: $table.sendDeviceHeaders,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastUpdateDate => $composableBuilder(
     column: $table.lastUpdateDate,
     builder: (column) => ColumnOrderings(column),
@@ -5231,6 +5297,11 @@ class $$ProfilesTableAnnotationComposer
 
   GeneratedColumnWithTypeConverter<Map<String, String>?, String> get headers =>
       $composableBuilder(column: $table.headers, builder: (column) => column);
+
+  GeneratedColumn<bool> get sendDeviceHeaders => $composableBuilder(
+    column: $table.sendDeviceHeaders,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get lastUpdateDate => $composableBuilder(
     column: $table.lastUpdateDate,
@@ -5423,6 +5494,7 @@ class $$ProfilesTableTableManager
                 Value<String> url = const Value.absent(),
                 Value<String?> ageSecretKey = const Value.absent(),
                 Value<Map<String, String>?> headers = const Value.absent(),
+                Value<bool> sendDeviceHeaders = const Value.absent(),
                 Value<DateTime?> lastUpdateDate = const Value.absent(),
                 Value<ExtendType> extendType = const Value.absent(),
                 Value<int?> scriptId = const Value.absent(),
@@ -5443,6 +5515,7 @@ class $$ProfilesTableTableManager
                 url: url,
                 ageSecretKey: ageSecretKey,
                 headers: headers,
+                sendDeviceHeaders: sendDeviceHeaders,
                 lastUpdateDate: lastUpdateDate,
                 extendType: extendType,
                 scriptId: scriptId,
@@ -5464,6 +5537,7 @@ class $$ProfilesTableTableManager
                 required String url,
                 Value<String?> ageSecretKey = const Value.absent(),
                 Value<Map<String, String>?> headers = const Value.absent(),
+                Value<bool> sendDeviceHeaders = const Value.absent(),
                 Value<DateTime?> lastUpdateDate = const Value.absent(),
                 required ExtendType extendType,
                 Value<int?> scriptId = const Value.absent(),
@@ -5484,6 +5558,7 @@ class $$ProfilesTableTableManager
                 url: url,
                 ageSecretKey: ageSecretKey,
                 headers: headers,
+                sendDeviceHeaders: sendDeviceHeaders,
                 lastUpdateDate: lastUpdateDate,
                 extendType: extendType,
                 scriptId: scriptId,

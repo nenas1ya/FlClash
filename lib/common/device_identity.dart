@@ -24,7 +24,8 @@ const _compactHwidLength = 16;
 typedef DeviceHeaders = Future<Map<String, String>> Function();
 
 class DeviceIdentity {
-  DeviceIdentity({DeviceInfoPlugin? plugin}) : _plugin = plugin ?? DeviceInfoPlugin();
+  DeviceIdentity({DeviceInfoPlugin? plugin})
+    : _plugin = plugin ?? DeviceInfoPlugin();
 
   final DeviceInfoPlugin _plugin;
   Future<Map<String, String>>? _headers;

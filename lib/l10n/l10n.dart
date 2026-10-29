@@ -8062,6 +8062,46 @@ class AppLocalizations {
       args: [name],
     );
   }
+
+  /// `Send device ID (HWID)`
+  String get sendDeviceHeaders {
+    return Intl.message(
+      'Send device ID (HWID)',
+      name: 'sendDeviceHeaders',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The subscription has reached its device limit. Remove an old device in the panel or ask your provider.`
+  String get deviceLimitReached {
+    return Intl.message(
+      'The subscription has reached its device limit. Remove an old device in the panel or ask your provider.',
+      name: 'deviceLimitReached',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The subscription rejected this device ID.`
+  String get deviceIdUnsupported {
+    return Intl.message(
+      'The subscription rejected this device ID.',
+      name: 'deviceIdUnsupported',
+      desc: '',
+      args: [],
+    );
+  }
+
+  /// `The subscription requires a device ID. Turn on “Send device ID” or add an x-hwid request header.`
+  String get deviceIdNotSent {
+    return Intl.message(
+      'The subscription requires a device ID. Turn on “Send device ID” or add an x-hwid request header.',
+      name: 'deviceIdNotSent',
+      desc: '',
+      args: [],
+    );
+  }
 }
 
 class AppLocalizationDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -655,6 +655,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage(
       "Le mode développeur est activé.",
     ),
+    "deviceIdNotSent": MessageLookupByLibrary.simpleMessage(
+      "L’abonnement exige un ID d’appareil. Activez « Envoyer l’ID de l’appareil » ou ajoutez un en-tête x-hwid.",
+    ),
+    "deviceIdUnsupported": MessageLookupByLibrary.simpleMessage(
+      "L’abonnement a refusé l’ID de cet appareil.",
+    ),
+    "deviceLimitReached": MessageLookupByLibrary.simpleMessage(
+      "L’abonnement a atteint sa limite d’appareils. Supprimez un ancien appareil dans le panneau ou contactez votre fournisseur.",
+    ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("Proxy de connexion"),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "Le proxy de connexion est la sortie utilisée pour joindre le serveur NTP.",
@@ -1775,6 +1784,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Veuillez sélectionner une stratégie de répartition",
     ),
     "send": MessageLookupByLibrary.simpleMessage("Envoyer"),
+    "sendDeviceHeaders": MessageLookupByLibrary.simpleMessage(
+      "Envoyer l’ID de l’appareil (HWID)",
+    ),
     "sendFromPhone": MessageLookupByLibrary.simpleMessage(
       "Envoyer depuis le téléphone",
     ),

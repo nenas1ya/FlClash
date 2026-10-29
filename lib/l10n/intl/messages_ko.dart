@@ -508,6 +508,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage(
       "개발자 모드가 켜졌습니다.",
     ),
+    "deviceIdNotSent": MessageLookupByLibrary.simpleMessage(
+      "구독에 기기 ID가 필요합니다. \'기기 ID 보내기\'를 켜거나 x-hwid 요청 헤더를 추가하세요.",
+    ),
+    "deviceIdUnsupported": MessageLookupByLibrary.simpleMessage(
+      "구독이 이 기기 ID를 거부했습니다.",
+    ),
+    "deviceLimitReached": MessageLookupByLibrary.simpleMessage(
+      "구독의 기기 수 한도에 도달했습니다. 패널에서 이전 기기를 삭제하거나 제공업체에 문의하세요.",
+    ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("다이얼러 프록시"),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "다이얼러 프록시는 NTP 서버에 연결할 때 사용하는 아웃바운드입니다.",
@@ -1385,6 +1394,9 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectRuleSet": MessageLookupByLibrary.simpleMessage("규칙 세트를 선택하세요"),
     "selectSplitStrategy": MessageLookupByLibrary.simpleMessage("분할 전략을 선택하세요"),
     "send": MessageLookupByLibrary.simpleMessage("보내기"),
+    "sendDeviceHeaders": MessageLookupByLibrary.simpleMessage(
+      "기기 ID(HWID) 보내기",
+    ),
     "sendFromPhone": MessageLookupByLibrary.simpleMessage("휴대폰에서 보내기"),
     "sendFromPhoneConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "휴대폰에서 받은 링크를 가져올까요?",

@@ -131,7 +131,10 @@ void main() {
 
       await profile.update(
         validate: (_, _) async => '',
-        deviceHeaders: () async => {hwidHeader: 'DEVICE', deviceOsHeader: 'Linux'},
+        deviceHeaders: () async => {
+          hwidHeader: 'DEVICE',
+          deviceOsHeader: 'Linux',
+        },
       );
 
       expect(received.value(hwidHeader), 'mine');
@@ -160,7 +163,8 @@ void main() {
       await savedFile.writeAsString('proxies: [kept]');
       replyHeaders = {
         deviceLimitReachedHeader: 'true',
-        announceHeader: 'base64:${base64.encode(utf8.encode('Remove a device'))}',
+        announceHeader:
+            'base64:${base64.encode(utf8.encode('Remove a device'))}',
       };
 
       await expectLater(
