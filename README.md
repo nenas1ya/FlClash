@@ -7,6 +7,8 @@
 - `required` — без этого патча релиз не собирается;
 - `optional` — если патч не накладывается на новый тег, сборка идёт без него, в описании релиза это отмечено.
 
-Android собирается, только если в secrets заданы `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`.
+Платформы: Windows (setup.exe, zip), Linux (AppImage, deb, rpm), Arch (`flclash-hwid-*.pkg.tar.zst`, переупаковка deb), Android (apk).
 
-Ручной запуск: Actions → hwid-release → Run workflow (можно указать тег апстрима).
+Android подписывается ключом форка, если в secrets заданы `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD`; без них — отладочным ключом с пакетом `com.follow.clash.dev`.
+
+Ручной запуск: Actions → hwid-release → Run workflow (можно указать тег апстрима; `force` пересобирает существующий релиз).

@@ -8,6 +8,10 @@ on:
       tag:
         description: 'Upstream tag (empty = latest stable)'
         required: false
+      force:
+        description: 'Rebuild even if the release exists (replaces it)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -28,32 +32,57 @@ jobs:
     outputs:
       tag: ${{ steps.pick.outputs.tag }}
       build: ${{ steps.pick.outputs.build }}
-      android: ${{ steps.pick.outputs.android }}
+      signed: ${{ steps.pick.outputs.signed }}
+      flutter: ${{ steps.toolchain.outputs.flutter }}
+      go: ${{ steps.toolchain.outputs.go }}
+      ndk: ${{ steps.toolchain.outputs.ndk }}
+      ca_bundle: ${{ steps.toolchain.outputs.ca_bundle }}
+      ca_sha256: ${{ steps.toolchain.outputs.ca_sha256 }}
     steps:
       - id: pick
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_TAG: ${{ inputs.tag }}
+          FORCE: ${{ inputs.force }}
           HAS_KEYSTORE: ${{ secrets.KEYSTORE != '' }}
         run: |
           tag="${INPUT_TAG:-$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)}"
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          echo "android=$HAS_KEYSTORE" >> "$GITHUB_OUTPUT"
-          if gh release view "$tag$SUFFIX" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          echo "signed=$HAS_KEYSTORE" >> "$GITHUB_OUTPUT"
+          if [ "$FORCE" != true ] && gh release view "$tag$SUFFIX" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "build=false" >> "$GITHUB_OUTPUT"
           else
             echo "build=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - id: toolchain
+        if: steps.pick.outputs.build == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.pick.outputs.tag }}
+        run: |
+          gh api "repos/$UPSTREAM/contents/.github/workflows/build.yaml?ref=$TAG" --jq .content | base64 -d > build.yaml
+          ca='.jobs.build.steps[] | select(.name == "Fetch CA certificates") | .env'
+          {
+            echo "flutter=$(yq '.env.FLUTTER_VERSION' build.yaml)"
+            echo "go=$(yq '.env.GO_VERSION' build.yaml)"
+            echo "ndk=$(yq '.env.NDK_VERSION' build.yaml)"
+            echo "ca_bundle=$(yq "$ca.CA_BUNDLE" build.yaml)"
+            echo "ca_sha256=$(yq "$ca.CA_BUNDLE_SHA256" build.yaml)"
+          } | tee -a "$GITHUB_OUTPUT"
+          grep -E '=(null)?$' "$GITHUB_OUTPUT" && { echo "::error::could not read the upstream toolchain"; exit 1; } || true
+
   build:
     needs: check
     if: needs.check.outputs.build == 'true'
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
           - platform: windows
             os: windows-2022
+          - platform: linux
+            os: ubuntu-22.04
           - platform: android
             os: ubuntu-latest
     runs-on: ${{ matrix.os }}
@@ -62,13 +91,13 @@ jobs:
         shell: bash
     env:
       TAG: ${{ needs.check.outputs.tag }}
-      ENABLED: ${{ matrix.platform != 'android' || needs.check.outputs.android == 'true' }}
+      CA_BUNDLE: ${{ needs.check.outputs.ca_bundle }}
+      CA_BUNDLE_SHA256: ${{ needs.check.outputs.ca_sha256 }}
     steps:
-      - if: env.ENABLED == 'true' && matrix.platform == 'windows'
+      - if: matrix.platform == 'windows'
         run: git config --global core.longpaths true
 
-      - if: env.ENABLED == 'true'
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: ${{ env.UPSTREAM }}
           ref: ${{ needs.check.outputs.tag }}
@@ -76,7 +105,6 @@ jobs:
           fetch-depth: 0
 
       - name: Apply patches
-        if: env.ENABLED == 'true'
         run: |
           git config user.name 'hwid-bot'
           git config user.email 'hwid-bot@users.noreply.github.com'
@@ -87,8 +115,8 @@ jobs:
             [ -n "$branch" ] || continue
             git fetch -q "https://github.com/$GITHUB_REPOSITORY.git" "$branch:p/$branch"
             sha=$(git rev-parse --short "p/$branch")
-            base=$(git merge-base "p/$branch" upstream-main)
-            if git cherry-pick $(git rev-list --reverse "$base..p/$branch"); then
+            commits=$(git rev-list --reverse --no-merges --right-only --cherry-pick "HEAD...p/$branch" ^upstream-main)
+            if [ -z "$commits" ] || git cherry-pick $commits; then
               echo "- applied: \`$branch\` @ $sha" >> "$notes"
             elif [ "$kind" = required ]; then
               git cherry-pick --abort || true
@@ -102,21 +130,8 @@ jobs:
           done <<< "$PATCHES"
           cat "$notes"
 
-      - name: Read upstream toolchain
-        if: env.ENABLED == 'true'
-        run: |
-          wf=.github/workflows/build.yaml
-          ca='.jobs.build.steps[] | select(.name == "Fetch CA certificates") | .env'
-          {
-            echo "FLUTTER_VERSION=$(yq '.env.FLUTTER_VERSION' $wf)"
-            echo "GO_VERSION=$(yq '.env.GO_VERSION' $wf)"
-            echo "NDK_VERSION=$(yq '.env.NDK_VERSION' $wf)"
-            echo "CA_BUNDLE=$(yq "$ca.CA_BUNDLE" $wf)"
-            echo "CA_BUNDLE_SHA256=$(yq "$ca.CA_BUNDLE_SHA256" $wf)"
-          } >> "$GITHUB_ENV"
-
       - name: Setup Android signing
-        if: env.ENABLED == 'true' && matrix.platform == 'android'
+        if: matrix.platform == 'android' && needs.check.outputs.signed == 'true'
         env:
           KEYSTORE: ${{ secrets.KEYSTORE }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -130,68 +145,115 @@ jobs:
             echo "keyPassword=$KEY_PASSWORD"
           } >> android/local.properties
 
-      - if: env.ENABLED == 'true'
-        uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version: ${{ needs.check.outputs.go }}
           cache-dependency-path: core/go.sum
 
-      - if: env.ENABLED == 'true' && matrix.platform == 'android'
+      - if: matrix.platform == 'android'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - if: env.ENABLED == 'true' && matrix.platform == 'android'
+      - if: matrix.platform == 'android'
         uses: gradle/actions/setup-gradle@v6
 
-      - if: env.ENABLED == 'true'
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: ${{ env.FLUTTER_VERSION }}
+          flutter-version: ${{ needs.check.outputs.flutter }}
 
-      - if: env.ENABLED == 'true' && matrix.platform == 'android'
+      - if: matrix.platform == 'android'
         id: ndk
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: ${{ env.NDK_VERSION }}
+          ndk-version: ${{ needs.check.outputs.ndk }}
           add-to-path: true
           link-to-sdk: true
 
-      - if: env.ENABLED == 'true'
-        run: flutter pub get
+      - run: flutter pub get
 
       - name: Fetch CA certificates
-        if: env.ENABLED == 'true'
         run: |
           bundle=core/Clash.Meta/component/ca/ca-certificates.crt
           curl -fsSL --retry 3 -o "$bundle" "https://curl.se/ca/$CA_BUNDLE"
           echo "$CA_BUNDLE_SHA256  $bundle" | sha256sum -c -
 
       - name: Build
-        if: env.ENABLED == 'true'
         env:
           ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
         run: dart setup.dart ${{ matrix.platform }} --env stable -v
 
-      - if: env.ENABLED == 'true'
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.platform }}
           path: ./dist
 
-      - if: env.ENABLED == 'true' && matrix.platform == 'windows'
+      - if: matrix.platform == 'linux'
         uses: actions/upload-artifact@v4
         with:
           name: patches
           path: ${{ runner.temp }}/patches.md
 
-  publish:
+  arch:
     needs: [check, build]
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    env:
+      TAG: ${{ needs.check.outputs.tag }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist-linux
+          path: in
+
+      - name: Package for Arch
+        run: |
+          deb=$(ls in/*-linux-amd64.deb | head -1)
+          ver=${TAG#v}
+          useradd -m builder
+          install -d -o builder build out
+          cp "$deb" build/flclash.deb
+          cat > build/PKGBUILD <<EOF
+          pkgname=flclash-hwid
+          pkgver=${ver//-/_}
+          pkgrel=1
+          pkgdesc='FlClash with custom subscription request headers'
+          arch=(x86_64)
+          url='https://github.com/$GITHUB_REPOSITORY'
+          license=(GPL-3.0-only)
+          provides=(flclash)
+          conflicts=(flclash flclash-bin)
+          depends=(gtk3 libayatana-appindicator libkeybinder3 libsecret)
+          options=(!strip !debug)
+          source=(flclash.deb)
+          sha256sums=(SKIP)
+          package() {
+            bsdtar -xf data.tar.* -C "\$pkgdir"
+            exe=\$(find "\$pkgdir/opt" -maxdepth 2 -type f -name FlClash | head -1)
+            test -n "\$exe"
+            install -d "\$pkgdir/usr/bin"
+            ln -s "/\${exe#\$pkgdir/}" "\$pkgdir/usr/bin/flclash"
+          }
+          EOF
+          sed -i 's/^          //' build/PKGBUILD
+          chown -R builder build
+          su builder -c 'cd build && makepkg --nodeps --noconfirm'
+          cp build/*.pkg.tar.zst out/
+          ls -la out
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist-arch
+          path: out
+
+  publish:
+    needs: [check, build, arch]
     runs-on: ubuntu-latest
     env:
       TAG: ${{ needs.check.outputs.tag }}
+      SIGNED: ${{ needs.check.outputs.signed }}
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -214,8 +276,17 @@ jobs:
             echo
             cat meta/patches.md
             echo
+            if [ "$SIGNED" = true ]; then
+              echo "Android: signed with the fork key, package \`com.follow.clash\` (uninstall the official FlClash first)."
+            else
+              echo "Android: **no release key in secrets** — debug-signed, package \`com.follow.clash.dev\`; installs next to the official app, but every build has a new key, so updates need a reinstall."
+            fi
+            echo
+            echo "Arch: \`sudo pacman -U flclash-hwid-*.pkg.tar.zst\`"
+            echo
             echo "Built by $RUN_URL"
           } > notes.md
+          gh release delete "$TAG$SUFFIX" -R "$GITHUB_REPOSITORY" --cleanup-tag --yes 2>/dev/null || true
           cd dist
           sha256sum * > SHA256SUMS
           cat SHA256SUMS
