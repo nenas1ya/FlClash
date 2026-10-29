@@ -36,6 +36,7 @@ _Profile _$ProfileFromJson(Map<String, dynamic> json) => _Profile(
         (k, e) => MapEntry(k, e as String),
       ) ??
       const {},
+  sendDeviceHeaders: json['sendDeviceHeaders'] as bool? ?? true,
   lastUpdateDate: json['lastUpdateDate'] == null
       ? null
       : DateTime.parse(json['lastUpdateDate'] as String),
@@ -77,6 +78,7 @@ Map<String, dynamic> _$ProfileToJson(_Profile instance) => <String, dynamic>{
   'url': instance.url,
   'ageSecretKey': instance.ageSecretKey,
   'headers': instance.headers,
+  'sendDeviceHeaders': instance.sendDeviceHeaders,
   'lastUpdateDate': instance.lastUpdateDate?.toIso8601String(),
   'autoUpdateDuration': instance.autoUpdateDuration.inMicroseconds,
   'subscriptionInfo': instance.subscriptionInfo,

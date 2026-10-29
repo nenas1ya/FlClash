@@ -631,6 +631,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage(
       "Режим разработчика включён.",
     ),
+    "deviceIdNotSent": MessageLookupByLibrary.simpleMessage(
+      "Подписке нужен ID устройства. Включите «Отправлять ID устройства» или добавьте заголовок x-hwid.",
+    ),
+    "deviceIdUnsupported": MessageLookupByLibrary.simpleMessage(
+      "Подписка не приняла ID этого устройства.",
+    ),
+    "deviceLimitReached": MessageLookupByLibrary.simpleMessage(
+      "Достигнут лимит устройств подписки. Удалите старое устройство в панели или обратитесь к провайдеру.",
+    ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage(
       "Прокси для подключения",
     ),
@@ -1723,6 +1732,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Выберите стратегию распределения",
     ),
     "send": MessageLookupByLibrary.simpleMessage("Отправить"),
+    "sendDeviceHeaders": MessageLookupByLibrary.simpleMessage(
+      "Отправлять ID устройства (HWID)",
+    ),
     "sendFromPhone": MessageLookupByLibrary.simpleMessage(
       "Отправить с телефона",
     ),

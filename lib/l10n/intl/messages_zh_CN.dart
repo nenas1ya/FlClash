@@ -478,6 +478,13 @@ class MessageLookup extends MessageLookupByLibrary {
     "detectionTip": MessageLookupByLibrary.simpleMessage("依赖第三方api，仅供参考"),
     "developerMode": MessageLookupByLibrary.simpleMessage("开发者模式"),
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage("开发者模式已启用。"),
+    "deviceIdNotSent": MessageLookupByLibrary.simpleMessage(
+      "订阅需要设备 ID。请开启“发送设备 ID”或添加 x-hwid 请求头。",
+    ),
+    "deviceIdUnsupported": MessageLookupByLibrary.simpleMessage("订阅拒绝了此设备 ID。"),
+    "deviceLimitReached": MessageLookupByLibrary.simpleMessage(
+      "订阅已达到设备数量上限。请在面板中移除旧设备或联系服务商。",
+    ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("拨号代理"),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "拨号代理为连接 NTP 服务器使用的出站。",
@@ -1283,6 +1290,7 @@ class MessageLookup extends MessageLookupByLibrary {
     "selectRuleSet": MessageLookupByLibrary.simpleMessage("请选择规则集"),
     "selectSplitStrategy": MessageLookupByLibrary.simpleMessage("请选择分流策略"),
     "send": MessageLookupByLibrary.simpleMessage("发送"),
+    "sendDeviceHeaders": MessageLookupByLibrary.simpleMessage("发送设备 ID (HWID)"),
     "sendFromPhone": MessageLookupByLibrary.simpleMessage("从手机发送"),
     "sendFromPhoneConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "导入手机发来的链接？",

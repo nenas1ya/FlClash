@@ -612,6 +612,15 @@ class MessageLookup extends MessageLookupByLibrary {
     "developerModeEnableTip": MessageLookupByLibrary.simpleMessage(
       "Developer mode is enabled.",
     ),
+    "deviceIdNotSent": MessageLookupByLibrary.simpleMessage(
+      "The subscription requires a device ID. Turn on “Send device ID” or add an x-hwid request header.",
+    ),
+    "deviceIdUnsupported": MessageLookupByLibrary.simpleMessage(
+      "The subscription rejected this device ID.",
+    ),
+    "deviceLimitReached": MessageLookupByLibrary.simpleMessage(
+      "The subscription has reached its device limit. Remove an old device in the panel or ask your provider.",
+    ),
     "dialerProxy": MessageLookupByLibrary.simpleMessage("Dialer proxy"),
     "dialerProxyDesc": MessageLookupByLibrary.simpleMessage(
       "Dialer proxy is the outbound used to reach the NTP server.",
@@ -1646,6 +1655,9 @@ class MessageLookup extends MessageLookupByLibrary {
       "Please select a split strategy",
     ),
     "send": MessageLookupByLibrary.simpleMessage("Send"),
+    "sendDeviceHeaders": MessageLookupByLibrary.simpleMessage(
+      "Send device ID (HWID)",
+    ),
     "sendFromPhone": MessageLookupByLibrary.simpleMessage("Send from phone"),
     "sendFromPhoneConfirmTitle": MessageLookupByLibrary.simpleMessage(
       "Import the link from your phone?",
