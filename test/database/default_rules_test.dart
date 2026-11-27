@@ -10,7 +10,6 @@ void main() {
     expect(defaultGlobalRules, [
       ...RulePreset.blockLoopback.rawRules,
       ...RulePreset.lanDirect.rawRules,
-      ...RulePreset.systemServicesDirect.rawRules,
       ...RulePreset.bittorrentDirect.rawRules,
     ]);
   });
