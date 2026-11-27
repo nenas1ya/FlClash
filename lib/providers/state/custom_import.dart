@@ -50,6 +50,10 @@ class CustomProfileImport {
   final List<Rule> rules;
   final ProfileOverrides overrides;
 
+  /// The request headers of the subscriptions [proxyProviders] adds, by
+  /// label, as their profiles send them.
+  final Map<String, Map<String, String>> providerHeaders;
+
   final int droppedSubRules;
 
   const CustomProfileImport({
@@ -60,6 +64,7 @@ class CustomProfileImport {
     required this.proxyGroups,
     required this.rules,
     required this.overrides,
+    this.providerHeaders = const {},
     this.droppedSubRules = 0,
   });
 }
@@ -140,6 +145,11 @@ CustomProfileImport readCustomProfileImport(
         ),
     ],
     rules: keptRules,
+    providerHeaders: _providerHeaders(
+      document['proxy-providers'],
+      names: proxyProviders.names,
+      added: {for (final provider in proxyProviders.added) provider.label},
+    ),
     droppedSubRules: rules.length - keptRules.length,
     overrides: _importOverrides(
       document,
@@ -154,6 +164,42 @@ CustomProfileImport readCustomProfileImport(
 }
 
 List<Object?> _listOf(Object? value) => value is List ? value : const [];
+
+/// A header mihomo lists several values for is sent as one, comma-joined;
+/// one the client cannot send is left out, as the header editor would.
+Map<String, Map<String, String>> _providerHeaders(
+  Object? section, {
+  required Map<String, String> names,
+  required Set<String> added,
+}) {
+  final result = <String, Map<String, String>>{};
+  for (final MapEntry(:key, :value) in (_mapOf(section) ?? const {}).entries) {
+    final label = names[key];
+    final provider = _mapOf(value);
+    final header = _mapOf(provider?['header']);
+    if (label == null ||
+        !added.contains(label) ||
+        provider?['type'] != 'http' ||
+        header == null) {
+      continue;
+    }
+    final headers = {
+      for (final MapEntry(:key, :value) in header.entries)
+        if (switch (value) {
+              List() => value.join(', '),
+              null => null,
+              _ => value.toString(),
+            }
+            case final text?
+            when isHeaderName(key.trim()) && isHeaderValue(text.trim()))
+          key.trim(): text.trim(),
+    };
+    if (headers.isNotEmpty) {
+      result.putIfAbsent(label, () => headers);
+    }
+  }
+  return result;
+}
 
 Map<String, Object?>? _mapOf(Object? value) =>
     value is Map ? Map<String, Object?>.from(value) : null;

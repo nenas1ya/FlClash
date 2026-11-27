@@ -713,6 +713,9 @@ _ProviderOverride _$ProviderOverrideFromJson(Map<String, dynamic> json) =>
       udp: json['udp'] as bool?,
       skipCertVerify: json['skip-cert-verify'] as bool?,
       ipVersion: $enumDecodeNullable(_$IpVersionEnumMap, json['ip-version']),
+      overrideExpr: (json['override-expr'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$ProviderOverrideToJson(_ProviderOverride instance) =>
@@ -722,6 +725,7 @@ Map<String, dynamic> _$ProviderOverrideToJson(_ProviderOverride instance) =>
       'udp': instance.udp,
       'skip-cert-verify': instance.skipCertVerify,
       'ip-version': _$IpVersionEnumMap[instance.ipVersion],
+      'override-expr': instance.overrideExpr,
     };
 
 const _$IpVersionEnumMap = {

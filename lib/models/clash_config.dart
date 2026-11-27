@@ -1704,6 +1704,9 @@ abstract class ProviderOverride with _$ProviderOverride {
     bool? udp,
     @JsonKey(name: 'skip-cert-verify') bool? skipCertVerify,
     @JsonKey(name: 'ip-version') IpVersion? ipVersion,
+
+    /// mihomo's expressions over each proxy, kept as the config writes them.
+    @JsonKey(name: 'override-expr') List<String>? overrideExpr,
   }) = _ProviderOverride;
 
   factory ProviderOverride.fromJson(Map<String, Object?> json) =>
@@ -1765,6 +1768,7 @@ extension ProxyProviderOptionsExt on ProxyProviderOptions {
           'udp': ?proxyOverride.udp,
           'skip-cert-verify': ?proxyOverride.skipCertVerify,
           'ip-version': ?proxyOverride.ipVersion?.value,
+          'override-expr': ?proxyOverride.overrideExpr,
         },
     };
   }

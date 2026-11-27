@@ -6100,7 +6100,8 @@ as String?,
 /// @nodoc
 mixin _$ProviderOverride {
 
-@JsonKey(name: 'additional-prefix') String? get additionalPrefix;@JsonKey(name: 'additional-suffix') String? get additionalSuffix; bool? get udp;@JsonKey(name: 'skip-cert-verify') bool? get skipCertVerify;@JsonKey(name: 'ip-version') IpVersion? get ipVersion;
+@JsonKey(name: 'additional-prefix') String? get additionalPrefix;@JsonKey(name: 'additional-suffix') String? get additionalSuffix; bool? get udp;@JsonKey(name: 'skip-cert-verify') bool? get skipCertVerify;@JsonKey(name: 'ip-version') IpVersion? get ipVersion;/// mihomo's expressions over each proxy, kept as the config writes them.
+@JsonKey(name: 'override-expr') List<String>? get overrideExpr;
 /// Create a copy of ProviderOverride
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -6114,20 +6115,20 @@ $ProviderOverrideCopyWith<ProviderOverride> get copyWith => _$ProviderOverrideCo
 @override
 bool operator ==(Object other) {
   final _this = this as ProviderOverride;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProviderOverride&&(identical(other.additionalPrefix, _this.additionalPrefix) || other.additionalPrefix == _this.additionalPrefix)&&(identical(other.additionalSuffix, _this.additionalSuffix) || other.additionalSuffix == _this.additionalSuffix)&&(identical(other.udp, _this.udp) || other.udp == _this.udp)&&(identical(other.skipCertVerify, _this.skipCertVerify) || other.skipCertVerify == _this.skipCertVerify)&&(identical(other.ipVersion, _this.ipVersion) || other.ipVersion == _this.ipVersion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProviderOverride&&(identical(other.additionalPrefix, _this.additionalPrefix) || other.additionalPrefix == _this.additionalPrefix)&&(identical(other.additionalSuffix, _this.additionalSuffix) || other.additionalSuffix == _this.additionalSuffix)&&(identical(other.udp, _this.udp) || other.udp == _this.udp)&&(identical(other.skipCertVerify, _this.skipCertVerify) || other.skipCertVerify == _this.skipCertVerify)&&(identical(other.ipVersion, _this.ipVersion) || other.ipVersion == _this.ipVersion)&&const DeepCollectionEquality().equals(other.overrideExpr, _this.overrideExpr));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as ProviderOverride;
-  return Object.hash(runtimeType,_this.additionalPrefix,_this.additionalSuffix,_this.udp,_this.skipCertVerify,_this.ipVersion);
+  return Object.hash(runtimeType,_this.additionalPrefix,_this.additionalSuffix,_this.udp,_this.skipCertVerify,_this.ipVersion,const DeepCollectionEquality().hash(_this.overrideExpr));
 }
 
 @override
 String toString() {
   final _this = this as ProviderOverride;
-  return 'ProviderOverride(additionalPrefix: ${_this.additionalPrefix}, additionalSuffix: ${_this.additionalSuffix}, udp: ${_this.udp}, skipCertVerify: ${_this.skipCertVerify}, ipVersion: ${_this.ipVersion})';
+  return 'ProviderOverride(additionalPrefix: ${_this.additionalPrefix}, additionalSuffix: ${_this.additionalSuffix}, udp: ${_this.udp}, skipCertVerify: ${_this.skipCertVerify}, ipVersion: ${_this.ipVersion}, overrideExpr: ${_this.overrideExpr})';
 }
 
 
@@ -6138,7 +6139,7 @@ abstract mixin class $ProviderOverrideCopyWith<$Res>  {
   factory $ProviderOverrideCopyWith(ProviderOverride value, $Res Function(ProviderOverride) _then) = _$ProviderOverrideCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'additional-prefix') String? additionalPrefix,@JsonKey(name: 'additional-suffix') String? additionalSuffix, bool? udp,@JsonKey(name: 'skip-cert-verify') bool? skipCertVerify,@JsonKey(name: 'ip-version') IpVersion? ipVersion
+@JsonKey(name: 'additional-prefix') String? additionalPrefix,@JsonKey(name: 'additional-suffix') String? additionalSuffix, bool? udp,@JsonKey(name: 'skip-cert-verify') bool? skipCertVerify,@JsonKey(name: 'ip-version') IpVersion? ipVersion,@JsonKey(name: 'override-expr') List<String>? overrideExpr
 });
 
 
@@ -6155,14 +6156,15 @@ class _$ProviderOverrideCopyWithImpl<$Res>
 
 /// Create a copy of ProviderOverride
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? additionalPrefix = freezed,Object? additionalSuffix = freezed,Object? udp = freezed,Object? skipCertVerify = freezed,Object? ipVersion = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? additionalPrefix = freezed,Object? additionalSuffix = freezed,Object? udp = freezed,Object? skipCertVerify = freezed,Object? ipVersion = freezed,Object? overrideExpr = freezed,}) {
   return _then(ProviderOverride(
 additionalPrefix: freezed == additionalPrefix ? _self.additionalPrefix : additionalPrefix // ignore: cast_nullable_to_non_nullable
 as String?,additionalSuffix: freezed == additionalSuffix ? _self.additionalSuffix : additionalSuffix // ignore: cast_nullable_to_non_nullable
 as String?,udp: freezed == udp ? _self.udp : udp // ignore: cast_nullable_to_non_nullable
 as bool?,skipCertVerify: freezed == skipCertVerify ? _self.skipCertVerify : skipCertVerify // ignore: cast_nullable_to_non_nullable
 as bool?,ipVersion: freezed == ipVersion ? _self.ipVersion : ipVersion // ignore: cast_nullable_to_non_nullable
-as IpVersion?,
+as IpVersion?,overrideExpr: freezed == overrideExpr ? _self.overrideExpr : overrideExpr // ignore: cast_nullable_to_non_nullable
+as List<String>?,
   ));
 }
 
@@ -6247,10 +6249,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'additional-prefix')  String? additionalPrefix, @JsonKey(name: 'additional-suffix')  String? additionalSuffix,  bool? udp, @JsonKey(name: 'skip-cert-verify')  bool? skipCertVerify, @JsonKey(name: 'ip-version')  IpVersion? ipVersion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'additional-prefix')  String? additionalPrefix, @JsonKey(name: 'additional-suffix')  String? additionalSuffix,  bool? udp, @JsonKey(name: 'skip-cert-verify')  bool? skipCertVerify, @JsonKey(name: 'ip-version')  IpVersion? ipVersion, @JsonKey(name: 'override-expr')  List<String>? overrideExpr)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProviderOverride() when $default != null:
-return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.skipCertVerify,_that.ipVersion);case _:
+return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.skipCertVerify,_that.ipVersion,_that.overrideExpr);case _:
   return orElse();
 
 }
@@ -6268,10 +6270,10 @@ return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.sk
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'additional-prefix')  String? additionalPrefix, @JsonKey(name: 'additional-suffix')  String? additionalSuffix,  bool? udp, @JsonKey(name: 'skip-cert-verify')  bool? skipCertVerify, @JsonKey(name: 'ip-version')  IpVersion? ipVersion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'additional-prefix')  String? additionalPrefix, @JsonKey(name: 'additional-suffix')  String? additionalSuffix,  bool? udp, @JsonKey(name: 'skip-cert-verify')  bool? skipCertVerify, @JsonKey(name: 'ip-version')  IpVersion? ipVersion, @JsonKey(name: 'override-expr')  List<String>? overrideExpr)  $default,) {final _that = this;
 switch (_that) {
 case _ProviderOverride():
-return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.skipCertVerify,_that.ipVersion);case _:
+return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.skipCertVerify,_that.ipVersion,_that.overrideExpr);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -6288,10 +6290,10 @@ return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.sk
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'additional-prefix')  String? additionalPrefix, @JsonKey(name: 'additional-suffix')  String? additionalSuffix,  bool? udp, @JsonKey(name: 'skip-cert-verify')  bool? skipCertVerify, @JsonKey(name: 'ip-version')  IpVersion? ipVersion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'additional-prefix')  String? additionalPrefix, @JsonKey(name: 'additional-suffix')  String? additionalSuffix,  bool? udp, @JsonKey(name: 'skip-cert-verify')  bool? skipCertVerify, @JsonKey(name: 'ip-version')  IpVersion? ipVersion, @JsonKey(name: 'override-expr')  List<String>? overrideExpr)?  $default,) {final _that = this;
 switch (_that) {
 case _ProviderOverride() when $default != null:
-return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.skipCertVerify,_that.ipVersion);case _:
+return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.skipCertVerify,_that.ipVersion,_that.overrideExpr);case _:
   return null;
 
 }
@@ -6303,7 +6305,7 @@ return $default(_that.additionalPrefix,_that.additionalSuffix,_that.udp,_that.sk
 @JsonSerializable()
 
 class _ProviderOverride implements ProviderOverride {
-  const _ProviderOverride({@JsonKey(name: 'additional-prefix') this.additionalPrefix, @JsonKey(name: 'additional-suffix') this.additionalSuffix, this.udp, @JsonKey(name: 'skip-cert-verify') this.skipCertVerify, @JsonKey(name: 'ip-version') this.ipVersion});
+  const _ProviderOverride({@JsonKey(name: 'additional-prefix') this.additionalPrefix, @JsonKey(name: 'additional-suffix') this.additionalSuffix, this.udp, @JsonKey(name: 'skip-cert-verify') this.skipCertVerify, @JsonKey(name: 'ip-version') this.ipVersion, @JsonKey(name: 'override-expr')  List<String>? overrideExpr}): _overrideExpr = overrideExpr;
   factory _ProviderOverride.fromJson(Map<String, dynamic> json) => _$ProviderOverrideFromJson(json);
 
 @override@JsonKey(name: 'additional-prefix') final  String? additionalPrefix;
@@ -6311,6 +6313,17 @@ class _ProviderOverride implements ProviderOverride {
 @override final  bool? udp;
 @override@JsonKey(name: 'skip-cert-verify') final  bool? skipCertVerify;
 @override@JsonKey(name: 'ip-version') final  IpVersion? ipVersion;
+/// mihomo's expressions over each proxy, kept as the config writes them.
+ final  List<String>? _overrideExpr;
+/// mihomo's expressions over each proxy, kept as the config writes them.
+@override@JsonKey(name: 'override-expr') List<String>? get overrideExpr {
+  final value = _overrideExpr;
+  if (value == null) return null;
+  if (_overrideExpr is EqualUnmodifiableListView) return _overrideExpr;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(value);
+}
+
 
 /// Create a copy of ProviderOverride
 /// with the given fields replaced by the non-null parameter values.
@@ -6325,18 +6338,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProviderOverride&&(identical(other.additionalPrefix, additionalPrefix) || other.additionalPrefix == additionalPrefix)&&(identical(other.additionalSuffix, additionalSuffix) || other.additionalSuffix == additionalSuffix)&&(identical(other.udp, udp) || other.udp == udp)&&(identical(other.skipCertVerify, skipCertVerify) || other.skipCertVerify == skipCertVerify)&&(identical(other.ipVersion, ipVersion) || other.ipVersion == ipVersion));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProviderOverride&&(identical(other.additionalPrefix, additionalPrefix) || other.additionalPrefix == additionalPrefix)&&(identical(other.additionalSuffix, additionalSuffix) || other.additionalSuffix == additionalSuffix)&&(identical(other.udp, udp) || other.udp == udp)&&(identical(other.skipCertVerify, skipCertVerify) || other.skipCertVerify == skipCertVerify)&&(identical(other.ipVersion, ipVersion) || other.ipVersion == ipVersion)&&const DeepCollectionEquality().equals(other.overrideExpr, _overrideExpr));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,additionalPrefix,additionalSuffix,udp,skipCertVerify,ipVersion);
+    return Object.hash(runtimeType,additionalPrefix,additionalSuffix,udp,skipCertVerify,ipVersion,const DeepCollectionEquality().hash(_overrideExpr));
 }
 
 @override
 String toString() {
-    return 'ProviderOverride(additionalPrefix: $additionalPrefix, additionalSuffix: $additionalSuffix, udp: $udp, skipCertVerify: $skipCertVerify, ipVersion: $ipVersion)';
+    return 'ProviderOverride(additionalPrefix: $additionalPrefix, additionalSuffix: $additionalSuffix, udp: $udp, skipCertVerify: $skipCertVerify, ipVersion: $ipVersion, overrideExpr: $overrideExpr)';
 }
 
 
@@ -6347,7 +6360,7 @@ abstract mixin class _$ProviderOverrideCopyWith<$Res> implements $ProviderOverri
   factory _$ProviderOverrideCopyWith(_ProviderOverride value, $Res Function(_ProviderOverride) _then) = __$ProviderOverrideCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'additional-prefix') String? additionalPrefix,@JsonKey(name: 'additional-suffix') String? additionalSuffix, bool? udp,@JsonKey(name: 'skip-cert-verify') bool? skipCertVerify,@JsonKey(name: 'ip-version') IpVersion? ipVersion
+@JsonKey(name: 'additional-prefix') String? additionalPrefix,@JsonKey(name: 'additional-suffix') String? additionalSuffix, bool? udp,@JsonKey(name: 'skip-cert-verify') bool? skipCertVerify,@JsonKey(name: 'ip-version') IpVersion? ipVersion,@JsonKey(name: 'override-expr') List<String>? overrideExpr
 });
 
 
@@ -6364,14 +6377,15 @@ class __$ProviderOverrideCopyWithImpl<$Res>
 
 /// Create a copy of ProviderOverride
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? additionalPrefix = freezed,Object? additionalSuffix = freezed,Object? udp = freezed,Object? skipCertVerify = freezed,Object? ipVersion = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? additionalPrefix = freezed,Object? additionalSuffix = freezed,Object? udp = freezed,Object? skipCertVerify = freezed,Object? ipVersion = freezed,Object? overrideExpr = freezed,}) {
   return _then(_ProviderOverride(
 additionalPrefix: freezed == additionalPrefix ? _self.additionalPrefix : additionalPrefix // ignore: cast_nullable_to_non_nullable
 as String?,additionalSuffix: freezed == additionalSuffix ? _self.additionalSuffix : additionalSuffix // ignore: cast_nullable_to_non_nullable
 as String?,udp: freezed == udp ? _self.udp : udp // ignore: cast_nullable_to_non_nullable
 as bool?,skipCertVerify: freezed == skipCertVerify ? _self.skipCertVerify : skipCertVerify // ignore: cast_nullable_to_non_nullable
 as bool?,ipVersion: freezed == ipVersion ? _self.ipVersion : ipVersion // ignore: cast_nullable_to_non_nullable
-as IpVersion?,
+as IpVersion?,overrideExpr: freezed == overrideExpr ? _self._overrideExpr : overrideExpr // ignore: cast_nullable_to_non_nullable
+as List<String>?,
   ));
 }
 

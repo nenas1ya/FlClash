@@ -297,10 +297,10 @@ class ProfilesAction extends _$ProfilesAction {
     final loads = <({String label, Future<void> Function() load})>[];
     for (final (:label, :url, :ageSecretKey, :content)
         in config.proxyProviders) {
-      final profile = Profile.normal(
-        label: label,
-        url: url,
-      ).copyWith(ageSecretKey: ageSecretKey);
+      final profile = Profile.normal(label: label, url: url).copyWith(
+        ageSecretKey: ageSecretKey,
+        headers: config.providerHeaders[label] ?? const {},
+      );
       profiles.put(profile);
       loads.add((
         label: label,

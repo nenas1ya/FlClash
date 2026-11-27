@@ -127,6 +127,53 @@ proxy-groups:
       });
     });
 
+    test('takes the headers and override expressions of a subscription', () {
+      final config = _read(r'''
+proxy-providers:
+  sub:
+    type: http
+    url: https://example.com/sub
+    header:
+      User-Agent: [Clash.Meta]
+      x-hwid: [ABC, DEF]
+      x-device-os: Linux
+      bad header: [x]
+    override:
+      additional-prefix: 'sub · '
+      override-expr:
+        - '(select(has("reality-opts")) | ."client-fingerprint") = "chrome"'
+  local: {type: file, path: ./local.yaml, header: {x-hwid: [ABC]}}
+proxy-groups:
+  - {name: Proxy, type: select, use: [sub, local]}
+''');
+
+      expect(config.providerHeaders, {
+        'sub': {
+          'User-Agent': 'Clash.Meta',
+          'x-hwid': 'ABC, DEF',
+          'x-device-os': 'Linux',
+        },
+      });
+      expect(config.overrides.proxyProviders['sub']?.definition['override'], {
+        'additional-prefix': 'sub · ',
+        'override-expr': [
+          '(select(has("reality-opts")) | ."client-fingerprint") = "chrome"',
+        ],
+      });
+    });
+
+    test('leaves the headers of a subscription the app already has', () {
+      final config = _read('''
+proxy-providers:
+  sub:
+    type: http
+    url: https://example.com/sub
+    header: {x-hwid: [ABC]}
+''', _app(profiles: {'https://example.com/sub': 'Mine'}));
+
+      expect(config.providerHeaders, isEmpty);
+    });
+
     test('adds file providers empty and inline ones with their proxies', () {
       final config = _read('''
 proxy-providers:
