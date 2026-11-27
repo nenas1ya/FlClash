@@ -1,4 +1,5 @@
-const _russianPackages = {
+/// Russian apps that should bypass the VPN; also the default reject list.
+const russianPackages = [
   'air.ru.obi.mobile',
   'az.vtb.android',
   'biz.dealnote.messenger',
@@ -535,7 +536,9 @@ const _russianPackages = {
   'wildberries.business',
   'www.metro.com',
   'youdrive.today',
-};
+];
+
+final _russianPackageSet = russianPackages.toSet();
 
 bool isRussianPackage(String packageName) =>
-    _russianPackages.contains(packageName);
+    _russianPackageSet.contains(packageName);

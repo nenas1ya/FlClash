@@ -428,7 +428,14 @@ void main() {
     });
 
     test('keeps the picked apps when the backup lists none', () async {
-      final configMap = configMapOf(buildContainer());
+      final source = buildContainer();
+      source
+          .read(vpnSettingProvider.notifier)
+          .update(
+            (state) =>
+                state.copyWith(accessControlProps: const AccessControlProps()),
+          );
+      final configMap = configMapOf(source);
       const picked = AccessControlProps(
         enable: true,
         mode: AccessControlMode.acceptSelected,

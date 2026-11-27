@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/russian_packages.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
 import 'package:prism_ui/prism_ui.dart';
@@ -395,7 +396,12 @@ void main() {
       expect(props.ipv6, false);
       expect(props.allowBypass, true);
       expect(props.dnsHijacking, false);
-      expect(props.accessControlProps.enable, false);
+      expect(props.accessControlProps.enable, true);
+      expect(
+        props.accessControlProps.mode,
+        AccessControlMode.rejectSelected,
+      );
+      expect(props.accessControlProps.rejectList, russianPackages);
     });
 
     test('fromJson handles null', () {

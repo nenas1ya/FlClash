@@ -1,4 +1,5 @@
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/russian_packages.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -112,7 +113,11 @@ const defaultAuthenticationProps = AuthenticationProps();
 const defaultNetworkProps = NetworkProps();
 const defaultProxiesStyleProps = ProxiesStyleProps();
 const defaultWindowProps = WindowProps();
-const defaultAccessControlProps = AccessControlProps();
+// Russian apps bypass the VPN out of the box; ones not installed are skipped.
+const defaultAccessControlProps = AccessControlProps(
+  enable: true,
+  rejectList: russianPackages,
+);
 const defaultThemeProps = ThemeProps(primaryColor: defaultPrimaryColor);
 
 HotKeyAction _defaultHotKeyAction(HotAction action, PhysicalKeyboardKey key) {

@@ -841,7 +841,7 @@ void main() {
 
     expect(
       container.read(accessControlStateProvider),
-      const AccessControlProps(),
+      defaultAccessControlProps,
     );
   });
 
