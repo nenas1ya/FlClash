@@ -142,7 +142,6 @@ class DeviceIdentity {
 
 final _registryLine = RegExp(r'^\s+(\S+)\s+REG_\w+\s+(.*?)\s*$');
 
-/// Values of one key as `reg query` prints them.
 @visibleForTesting
 Map<String, String> registryValues(String output) {
   return {
@@ -152,7 +151,6 @@ Map<String, String> registryValues(String output) {
   };
 }
 
-/// Windows 11 still names itself Windows 10 in `ProductName`.
 @visibleForTesting
 String? windowsProductName(Map<String, String> currentVersion) {
   final name = currentVersion['ProductName'];
@@ -168,7 +166,6 @@ final _ioregUuid = RegExp(r'"IOPlatformUUID"\s*=\s*"([^"]+)"');
 @visibleForTesting
 String? ioregPlatformUuid(String output) => _ioregUuid.firstMatch(output)?[1];
 
-/// `KEY=value` lines of os-release(5), quotes dropped.
 @visibleForTesting
 Map<String, String> osRelease(String text) {
   final values = <String, String>{};
