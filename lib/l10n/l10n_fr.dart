@@ -1883,6 +1883,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get addedRules => 'Règles ajoutées';
 
   @override
+  String get addedRulesImportReplaceTip =>
+      'L’import remplace les règles ajoutées actuelles. Les règles inchangées restent désactivées dans les profils où elles l’étaient.';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return 'Règles SUB-RULE ignorées : $count. Les règles ajoutées ne prennent pas en charge les sous-règles.';
+  }
+
+  @override
   String get addedRulesAfterScript =>
       'Insérées après l\'exécution du script, avant les règles du profil';
 

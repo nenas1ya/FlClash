@@ -1865,6 +1865,15 @@ class AppLocalizationsRu extends AppLocalizations {
   String get addedRules => 'Добавленные правила';
 
   @override
+  String get addedRulesImportReplaceTip =>
+      'Импорт заменит текущие добавленные правила. Правила, которые не изменились, останутся отключёнными в тех профилях, где их отключили.';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return 'Пропущено правил SUB-RULE: $count. Добавленные правила не поддерживают sub-rules.';
+  }
+
+  @override
   String get addedRulesAfterScript =>
       'Добавляются после выполнения скрипта, перед правилами профиля';
 

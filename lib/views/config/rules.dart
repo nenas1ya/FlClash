@@ -1,7 +1,13 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:fl_clash/common/added_rules.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/features/features.dart';
 import 'package:fl_clash/models/clash_config.dart';
 import 'package:fl_clash/providers/providers.dart';
+import 'package:fl_clash/state.dart';
 import 'package:fl_clash/ui/icons/icons.dart';
 import 'package:fl_clash/widgets/widgets.dart';
 import 'package:flutter/widgets.dart';
@@ -18,6 +24,7 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
   final _key = uniqueId;
   var _query = SearchQuery('');
   final _searchTexts = Expando<String>();
+  bool _importing = false;
 
   List<Rule> _visibleRules(List<Rule> rules) {
     return rules
@@ -41,6 +48,129 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
       return;
     }
     ref.read(globalRulesProvider.notifier).put(res);
+  }
+
+  String? _ruleError(Rule rule) {
+    final appLocalizations = context.appLocalizations;
+    final payloadError = rule.payloadError;
+    if (payloadError != null) {
+      return payloadError.getMessage(context);
+    }
+    if (rule.ruleAction != RuleAction.MATCH &&
+        rule.realContent?.isNotEmpty != true) {
+      return rule.ruleAction == RuleAction.RULE_SET
+          ? appLocalizations.emptyTip(appLocalizations.ruleSet)
+          : appLocalizations.contentNotEmpty;
+    }
+    if (rule.realTarget?.isNotEmpty != true) {
+      return appLocalizations.splitStrategyNotEmpty;
+    }
+    return null;
+  }
+
+  ({List<Rule> rules, int skippedSubRules}) _decodeRules(String content) {
+    final appLocalizations = context.appLocalizations;
+    final rules = <Rule>[];
+    var skippedSubRules = 0;
+    try {
+      for (final (:line, :rule) in decodeRuleList(
+        content,
+        previous: ref.read(globalRulesProvider).value ?? const [],
+      )) {
+        if (rule.ruleAction == RuleAction.SUB_RULE) {
+          skippedSubRules++;
+          continue;
+        }
+        if (_ruleError(rule) case final error?) {
+          throw MessageException(appLocalizations.lineIssueTip(line, error));
+        }
+        rules.add(asAddedRule(rule));
+      }
+    } on RuleLineException catch (error) {
+      throw MessageException(
+        appLocalizations.lineIssueTip(
+          error.line,
+          appLocalizations.ruleTextInvalid,
+        ),
+      );
+    }
+    return (rules: rules, skippedSubRules: skippedSubRules);
+  }
+
+  void _setRules(({List<Rule> rules, int skippedSubRules}) decoded) {
+    ref.read(globalRulesProvider.notifier).setAll(decoded.rules);
+    if (decoded.skippedSubRules > 0 && mounted) {
+      dialogs.showAlert(
+        title: context.appLocalizations.addedRules,
+        message: TextSpan(
+          text: context.appLocalizations.addedRulesSkippedSubRules(
+            decoded.skippedSubRules,
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _handleQuickEdit() {
+    final appLocalizations = context.appLocalizations;
+    final rules = ref.read(globalRulesProvider).value;
+    if (rules == null) {
+      return Future.value();
+    }
+    return showQuickEdit(
+      context,
+      title: appLocalizations.addedRules,
+      content: encodeRuleList(rules),
+      schema: EditorSchema.rules,
+      invalidMessage: appLocalizations.ruleListInvalid,
+      apply: (content) => _setRules(_decodeRules(content)),
+    );
+  }
+
+  Future<String?> _readRuleText(String url) async {
+    final response = await request.getFileResponseForUrl(url);
+    final text = utf8.decode(
+      decompressUnlabeled(response.data ?? Uint8List(0)),
+      allowMalformed: true,
+    );
+    return ruleTextOfDocument(loadPlainYaml(text));
+  }
+
+  Future<void> _handleImportFromUrl() async {
+    final appLocalizations = context.appLocalizations;
+    final url = await dialogs.showUrlInput(title: appLocalizations.importUrl);
+    if (url == null || !mounted) {
+      return;
+    }
+    final decoded = await globalState.safeRun(
+      () async {
+        final content = await _readRuleText(url);
+        if (content == null) {
+          throw MessageException(appLocalizations.ruleListInvalid);
+        }
+        return _decodeRules(content);
+      },
+      title: appLocalizations.importUrl,
+      silence: false,
+      onStart: () => setState(() => _importing = true),
+      onEnd: () {
+        if (mounted) setState(() => _importing = false);
+      },
+    );
+    if (decoded == null || !mounted) {
+      return;
+    }
+    if ((ref.read(globalRulesProvider).value ?? const []).isNotEmpty) {
+      final res = await dialogs.showMessage(
+        message: TextSpan(text: appLocalizations.addedRulesImportReplaceTip),
+        destructive: true,
+        confirmText: appLocalizations.replace,
+      );
+      if (res != true || !mounted) {
+        return;
+      }
+    }
+    _setRules(decoded);
   }
 
   void _handleQuickActions() {
@@ -130,13 +260,21 @@ class _AddedRulesViewState extends ConsumerState<AddedRulesView> {
               icon: const GlyphIcon(AppGlyphs.addCircle),
             ),
         ],
+        isLoading: _importing,
         iconActions: [
-          if (!isSelecting)
+          if (!isSelecting) ...[
+            customQuickEditAction(context, onPressed: _handleQuickEdit),
+            IconButtonData(
+              glyph: AppGlyphs.cloudDownload,
+              onPressed: _importing ? null : _handleImportFromUrl,
+              tooltip: appLocalizations.importUrl,
+            ),
             IconButtonData(
               glyph: AppGlyphs.rulePresets,
               onPressed: _handleQuickActions,
               tooltip: appLocalizations.quickActions,
             ),
+          ],
         ],
         selectionActions: isSelecting ? selectionActions : const [],
         body: NullStatusSwitcher(

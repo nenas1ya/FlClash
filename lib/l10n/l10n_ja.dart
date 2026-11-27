@@ -1824,6 +1824,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get addedRules => '追加ルール';
 
   @override
+  String get addedRulesImportReplaceTip =>
+      'インポートすると現在の追加ルールが置き換えられます。変更されないルールは、無効にしていたプロファイルでは無効のままです。';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return 'SUB-RULE ルールをスキップしました：$count。追加ルールはサブルールに対応していません。';
+  }
+
+  @override
   String get addedRulesAfterScript => 'スクリプトの実行後、プロファイルのルールより前に挿入されます';
 
   @override

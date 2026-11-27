@@ -1883,6 +1883,15 @@ class AppLocalizationsEs extends AppLocalizations {
   String get addedRules => 'Reglas añadidas';
 
   @override
+  String get addedRulesImportReplaceTip =>
+      'Importar reemplaza las reglas añadidas actuales. Las reglas que no cambian siguen desactivadas en los perfiles donde lo estaban.';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return 'Reglas SUB-RULE omitidas: $count. Las reglas añadidas no admiten subreglas.';
+  }
+
+  @override
   String get addedRulesAfterScript =>
       'Se insertan tras ejecutar el script, antes de las reglas del perfil';
 

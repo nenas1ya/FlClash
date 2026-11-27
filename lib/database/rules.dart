@@ -120,6 +120,22 @@ class RulesDao extends DatabaseAccessor<Database> with _$RulesDaoMixin {
     });
   }
 
+  void replaceGlobalRulesWithBatch(
+    Batch b,
+    Iterable<Rule> globalRules, {
+    required Iterable<int> removedIds,
+  }) {
+    rules.deleteInChunks(
+      b,
+      removedIds,
+      (t, chunk) => t.id.isIn(chunk) & t.profileId.isNull(),
+    );
+    b.insertAllOnConflictUpdate(
+      rules,
+      globalRules.map((rule) => rule.copyWith(profileId: null).toCompanion()),
+    );
+  }
+
   void setProfileRulesWithBatch(int profileId, Batch b, Iterable<Rule> rules) {
     final keys = indexing.generateNKeys(rules.length);
     this.rules.setAll(

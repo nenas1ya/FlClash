@@ -1864,6 +1864,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addedRules => 'Added rules';
 
   @override
+  String get addedRulesImportReplaceTip =>
+      'Importing replaces the added rules you have now. Rules that stay the same keep the profiles they are turned off in.';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return 'SUB-RULE rules skipped: $count. Added rules do not support sub-rules.';
+  }
+
+  @override
   String get addedRulesAfterScript =>
       'Inserted after the script runs, ahead of the profile\'s rules';
 

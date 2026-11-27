@@ -1824,6 +1824,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get addedRules => '추가한 규칙';
 
   @override
+  String get addedRulesImportReplaceTip =>
+      '가져오면 현재 추가된 규칙이 교체됩니다. 변경되지 않은 규칙은 꺼 둔 프로필에서 계속 꺼져 있습니다.';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return 'SUB-RULE 규칙 $count개를 건너뛰었습니다. 추가된 규칙은 하위 규칙을 지원하지 않습니다.';
+  }
+
+  @override
   String get addedRulesAfterScript => '스크립트 실행 후 프로필 규칙 앞에 삽입됩니다';
 
   @override

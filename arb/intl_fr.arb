@@ -577,6 +577,8 @@
   "appendSystemDns": "Ajouter le DNS du système",
   "editRule": "Modifier la règle",
   "addedRules": "Règles ajoutées",
+  "addedRulesImportReplaceTip": "L’import remplace les règles ajoutées actuelles. Les règles inchangées restent désactivées dans les profils où elles l’étaient.",
+  "addedRulesSkippedSubRules": "Règles SUB-RULE ignorées : {count}. Les règles ajoutées ne prennent pas en charge les sous-règles.",
   "addedRulesAfterScript": "Insérées après l'exécution du script, avant les règles du profil",
   "controlGlobalAddedRules": "Gérer les règles ajoutées globales",
   "quickActions": "Actions rapides",

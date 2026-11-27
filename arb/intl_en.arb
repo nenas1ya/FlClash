@@ -651,6 +651,8 @@
   "appendSystemDns": "Append system DNS",
   "editRule": "Edit rule",
   "addedRules": "Added rules",
+  "addedRulesImportReplaceTip": "Importing replaces the added rules you have now. Rules that stay the same keep the profiles they are turned off in.",
+  "addedRulesSkippedSubRules": "SUB-RULE rules skipped: {count}. Added rules do not support sub-rules.",
   "addedRulesAfterScript": "Inserted after the script runs, ahead of the profile's rules",
   "controlGlobalAddedRules": "Control global added rules",
   "quickActions": "Quick actions",

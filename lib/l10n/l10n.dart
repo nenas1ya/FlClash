@@ -3576,6 +3576,18 @@ abstract class AppLocalizations {
   /// **'Added rules'**
   String get addedRules;
 
+  /// No description provided for @addedRulesImportReplaceTip.
+  ///
+  /// In en, this message translates to:
+  /// **'Importing replaces the added rules you have now. Rules that stay the same keep the profiles they are turned off in.'**
+  String get addedRulesImportReplaceTip;
+
+  /// No description provided for @addedRulesSkippedSubRules.
+  ///
+  /// In en, this message translates to:
+  /// **'SUB-RULE rules skipped: {count}. Added rules do not support sub-rules.'**
+  String addedRulesSkippedSubRules(Object count);
+
   /// No description provided for @addedRulesAfterScript.
   ///
   /// In en, this message translates to:

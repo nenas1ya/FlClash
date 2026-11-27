@@ -738,6 +738,29 @@ class GlobalRules extends _$GlobalRules
 
   @override
   Future<void> persistRule(Rule rule) => database.rulesDao.putRule(rule);
+
+  void setAll(List<Rule> rules) {
+    final orders = indexing.generateNKeys(rules.length);
+    final next = [
+      for (final (index, rule) in rules.indexed)
+        rule.copyWith(order: orders[index]),
+    ];
+    final kept = {for (final rule in next) rule.id};
+    final removed = [
+      for (final rule in value)
+        if (!kept.contains(rule.id)) rule.id,
+    ];
+    optimistic(
+      next,
+      () => database.batch(
+        (b) => database.rulesDao.replaceGlobalRulesWithBatch(
+          b,
+          next,
+          removedIds: removed,
+        ),
+      ),
+    );
+  }
 }
 
 @riverpod

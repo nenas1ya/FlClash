@@ -341,7 +341,7 @@ final class GlobalRulesProvider
   GlobalRules create() => GlobalRules();
 }
 
-String _$globalRulesHash() => r'44b89f90ca1499f7ea7a0344206fe16d38deeffb';
+String _$globalRulesHash() => r'2d690b5d19788a8f9f33e02fe468071369e37f4d';
 
 abstract class _$GlobalRules extends $StreamNotifier<List<Rule>> {
   Stream<List<Rule>> build();

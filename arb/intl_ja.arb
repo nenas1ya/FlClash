@@ -577,6 +577,8 @@
   "appendSystemDns": "システムDNSを追加",
   "editRule": "ルールを編集",
   "addedRules": "追加ルール",
+  "addedRulesImportReplaceTip": "インポートすると現在の追加ルールが置き換えられます。変更されないルールは、無効にしていたプロファイルでは無効のままです。",
+  "addedRulesSkippedSubRules": "SUB-RULE ルールをスキップしました：{count}。追加ルールはサブルールに対応していません。",
   "addedRulesAfterScript": "スクリプトの実行後、プロファイルのルールより前に挿入されます",
   "controlGlobalAddedRules": "グローバル追加ルールを管理",
   "quickActions": "クイック操作",

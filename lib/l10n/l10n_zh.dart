@@ -1815,6 +1815,14 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addedRules => '附加规则';
 
   @override
+  String get addedRulesImportReplaceTip => '导入会替换当前的附加规则。未变化的规则在已禁用它们的配置中保持禁用。';
+
+  @override
+  String addedRulesSkippedSubRules(Object count) {
+    return '已跳过 SUB-RULE 规则：$count。附加规则不支持子规则。';
+  }
+
+  @override
   String get addedRulesAfterScript => '在脚本之后插入，排在配置规则前面';
 
   @override
