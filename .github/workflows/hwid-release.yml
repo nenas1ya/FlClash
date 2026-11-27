@@ -110,17 +110,46 @@ jobs:
           git rev-parse HEAD > "$RUNNER_TEMP/base"
           git fetch -q "https://github.com/$UPSTREAM.git" main:upstream-main
           generated='(^|/)generated/|^lib/l10n/l10n(_[a-z_]+)?\.dart$'
+          arb='^arb/[^/]+\.arb$'
+          # Patches append their strings to the end of the .arb files, so two
+          # of them always collide there: merge the keys instead of the lines.
+          merge_arb() {
+            python3 - "$1" <<'PY'
+          import json, subprocess, sys
+          path = sys.argv[1]
+          def stage(n):
+              r = subprocess.run(['git', 'show', f':{n}:{path}'], capture_output=True, text=True)
+              return json.loads(r.stdout) if r.returncode == 0 else {}
+          base, ours, theirs = stage(1), stage(2), stage(3)
+          for k in base.keys() - theirs.keys():
+              ours.pop(k, None)
+          for k, v in theirs.items():
+              if base.get(k) != v:
+                  ours[k] = v
+          with open(path, 'w', encoding='utf-8') as f:
+              json.dump(ours, f, ensure_ascii=False, indent=2)
+              f.write('\n')
+          PY
+          }
           pick() {
             git cherry-pick "$@" && return 0
             while git rev-parse -q --verify CHERRY_PICK_HEAD >/dev/null; do
               conflicted=$(git diff --name-only --diff-filter=U)
               [ -n "$conflicted" ] || return 1
-              if grep -vqE "$generated" <<< "$conflicted"; then
+              if grep -vqE "$generated|$arb" <<< "$conflicted"; then
                 return 1
               fi
-              echo "::notice::regenerating instead of merging: $(echo $conflicted)"
-              git checkout --theirs -- $conflicted
-              git add -- $conflicted
+              for f in $(grep -E "$arb" <<< "$conflicted"); do
+                echo "::notice::merging keys of $f"
+                merge_arb "$f" || return 1
+                git add -- "$f"
+              done
+              conflicted=$(grep -E "$generated" <<< "$conflicted" || true)
+              if [ -n "$conflicted" ]; then
+                echo "::notice::regenerating instead of merging: $(echo $conflicted)"
+                git checkout --theirs -- $conflicted
+                git add -- $conflicted
+              fi
               GIT_EDITOR=true git cherry-pick --continue || continue
             done
           }
