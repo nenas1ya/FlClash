@@ -22,12 +22,12 @@ concurrency:
 
 env:
   UPSTREAM: chen08209/FlClash
-  SUFFIX: -hwid
   PATCHES: |
-    required feat/profile-request-headers
-    optional feat/device-identity
-    optional feat/ru-services
-    optional feat/ru-apps
+    required patch/profile-request-headers
+    required patch/fork-updates
+    optional patch/device-identity
+    optional patch/ru-services
+    optional patch/ru-apps
 
 jobs:
   check:
@@ -36,6 +36,7 @@ jobs:
       tag: ${{ steps.pick.outputs.tag }}
       build: ${{ steps.pick.outputs.build }}
       signed: ${{ steps.pick.outputs.signed }}
+      version: ${{ steps.toolchain.outputs.version }}
       flutter: ${{ steps.toolchain.outputs.flutter }}
       go: ${{ steps.toolchain.outputs.go }}
       ndk: ${{ steps.toolchain.outputs.ndk }}
@@ -50,9 +51,13 @@ jobs:
           HAS_KEYSTORE: ${{ secrets.KEYSTORE != '' }}
         run: |
           tag="${INPUT_TAG:-$(gh api "repos/$UPSTREAM/releases/latest" --jq .tag_name)}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::$tag is not a stable vX.Y.Z tag"
+            exit 1
+          fi
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "signed=$HAS_KEYSTORE" >> "$GITHUB_OUTPUT"
-          if [ "$FORCE" != true ] && gh release view "$tag$SUFFIX" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+          if [ "$FORCE" != true ] && gh release view "$tag" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             echo "build=false" >> "$GITHUB_OUTPUT"
           else
             echo "build=true" >> "$GITHUB_OUTPUT"
@@ -65,8 +70,15 @@ jobs:
           TAG: ${{ steps.pick.outputs.tag }}
         run: |
           gh api "repos/$UPSTREAM/contents/.github/workflows/build.yaml?ref=$TAG" --jq .content | base64 -d > build.yaml
+          gh api "repos/$UPSTREAM/contents/pubspec.yaml?ref=$TAG" --jq .content | base64 -d > pubspec.yaml
+          committed="$(sed -n 's/^version: .*+\([0-9]*\)$/\1/p' pubspec.yaml)"
+          build="$(date -u +%Y%m%d%H)"
+          if ((build <= ${committed:-0})); then
+            build=$((committed + 1))
+          fi
           ca='.jobs.build.steps[] | select(.name == "Fetch CA certificates") | .env'
           {
+            echo "version=${TAG#v}+$build"
             echo "flutter=$(yq '.env.FLUTTER_VERSION' build.yaml)"
             echo "go=$(yq '.env.GO_VERSION' build.yaml)"
             echo "ndk=$(yq '.env.NDK_VERSION' build.yaml)"
@@ -75,9 +87,91 @@ jobs:
           } | tee -a "$GITHUB_OUTPUT"
           grep -E '=(null)?$' "$GITHUB_OUTPUT" && { echo "::error::could not read the upstream toolchain"; exit 1; } || true
 
-  build:
+  prepare:
     needs: check
     if: needs.check.outputs.build == 'true'
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ needs.check.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.UPSTREAM }}
+          ref: ${{ needs.check.outputs.tag }}
+          submodules: true
+          fetch-depth: 0
+
+      - name: Apply patches
+        run: |
+          git config user.name 'hwid-bot'
+          git config user.email 'hwid-bot@users.noreply.github.com'
+          git rev-parse HEAD > "$RUNNER_TEMP/base"
+          git fetch -q "https://github.com/$UPSTREAM.git" main:upstream-main
+          generated='(^|/)generated/|^lib/l10n/l10n(_[a-z_]+)?\.dart$'
+          pick() {
+            git cherry-pick "$@" && return 0
+            while git rev-parse -q --verify CHERRY_PICK_HEAD >/dev/null; do
+              conflicted=$(git diff --name-only --diff-filter=U)
+              [ -n "$conflicted" ] || return 1
+              if grep -vqE "$generated" <<< "$conflicted"; then
+                return 1
+              fi
+              echo "::notice::regenerating instead of merging: $(echo $conflicted)"
+              git checkout --theirs -- $conflicted
+              git add -- $conflicted
+              GIT_EDITOR=true git cherry-pick --continue || continue
+            done
+          }
+          notes="$RUNNER_TEMP/patches.md"
+          : > "$notes"
+          while read -r kind branch; do
+            [ -n "$branch" ] || continue
+            git fetch -q "https://github.com/$GITHUB_REPOSITORY.git" "$branch:p/$branch"
+            sha=$(git rev-parse --short "p/$branch")
+            before=$(git rev-parse HEAD)
+            commits=$(git rev-list --reverse --no-merges --right-only --cherry-pick "HEAD...p/$branch" ^upstream-main)
+            if [ -z "$commits" ] || pick $commits; then
+              echo "- applied: \`$branch\` @ $sha" >> "$notes"
+              continue
+            fi
+            git cherry-pick --abort 2>/dev/null || true
+            git reset -q --hard "$before"
+            if [ "$kind" = required ]; then
+              echo "::error::required patch $branch does not apply to $TAG"
+              exit 1
+            fi
+            echo "::warning::optional patch $branch skipped: conflicts with $TAG"
+            echo "- **skipped (conflict):** \`$branch\` @ $sha" >> "$notes"
+          done <<< "$PATCHES"
+          cat "$notes"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ needs.check.outputs.flutter }}
+          cache: true
+
+      - name: Regenerate code
+        run: |
+          yq -i '.hooks.user_defines.setup.build_assets = false | .hooks.user_defines.rust_api.build_assets = false' pubspec.yaml
+          flutter pub get
+          dart run build_runner build --delete-conflicting-outputs
+          flutter gen-l10n
+          git checkout -- pubspec.yaml
+          git add -A lib test
+          git diff --cached --quiet || git commit -q -m 'chore: regenerate code'
+          git diff --binary "$(cat "$RUNNER_TEMP/base")" HEAD > "$RUNNER_TEMP/combined.diff"
+          git diff --stat "$(cat "$RUNNER_TEMP/base")" HEAD
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: patches
+          path: |
+            ${{ runner.temp }}/combined.diff
+            ${{ runner.temp }}/patches.md
+
+  build:
+    needs: [check, prepare]
     strategy:
       fail-fast: false
       matrix:
@@ -94,6 +188,7 @@ jobs:
         shell: bash
     env:
       TAG: ${{ needs.check.outputs.tag }}
+      VERSION: ${{ needs.check.outputs.version }}
       CA_BUNDLE: ${{ needs.check.outputs.ca_bundle }}
       CA_BUNDLE_SHA256: ${{ needs.check.outputs.ca_sha256 }}
     steps:
@@ -105,33 +200,18 @@ jobs:
           repository: ${{ env.UPSTREAM }}
           ref: ${{ needs.check.outputs.tag }}
           submodules: recursive
-          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: patches
+          path: ${{ runner.temp }}/patches
 
       - name: Apply patches
         run: |
-          git config user.name 'hwid-bot'
-          git config user.email 'hwid-bot@users.noreply.github.com'
-          git fetch -q "https://github.com/$UPSTREAM.git" main:upstream-main
-          notes="$RUNNER_TEMP/patches.md"
-          : > "$notes"
-          while read -r kind branch; do
-            [ -n "$branch" ] || continue
-            git fetch -q "https://github.com/$GITHUB_REPOSITORY.git" "$branch:p/$branch"
-            sha=$(git rev-parse --short "p/$branch")
-            commits=$(git rev-list --reverse --no-merges --right-only --cherry-pick "HEAD...p/$branch" ^upstream-main)
-            if [ -z "$commits" ] || git cherry-pick $commits; then
-              echo "- applied: \`$branch\` @ $sha" >> "$notes"
-            elif [ "$kind" = required ]; then
-              git cherry-pick --abort || true
-              echo "::error::required patch $branch does not apply to $TAG"
-              exit 1
-            else
-              git cherry-pick --abort || true
-              echo "::warning::optional patch $branch skipped: conflicts with $TAG"
-              echo "- **skipped (conflict):** \`$branch\` @ $sha" >> "$notes"
-            fi
-          done <<< "$PATCHES"
-          cat "$notes"
+          git apply --binary --cached "$RUNNER_TEMP/patches/combined.diff"
+          git checkout -- .
+          sed "s/^version: .*/version: $VERSION/" pubspec.yaml > pubspec.yaml.tmp
+          mv pubspec.yaml.tmp pubspec.yaml
 
       - name: Setup Android signing
         if: matrix.platform == 'android' && needs.check.outputs.signed == 'true'
@@ -152,12 +232,6 @@ jobs:
         with:
           go-version: ${{ needs.check.outputs.go }}
           cache-dependency-path: core/go.sum
-
-      - if: matrix.platform == 'android'
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
 
       - if: matrix.platform == 'android'
         uses: gradle/actions/setup-gradle@v6
@@ -186,18 +260,12 @@ jobs:
       - name: Build
         env:
           ANDROID_NDK_HOME: ${{ steps.ndk.outputs.ndk-path }}
-        run: dart setup.dart ${{ matrix.platform }} --env stable -v
+        run: dart tool/package.dart ${{ matrix.platform }} --env stable --tag "$TAG" -v
 
       - uses: actions/upload-artifact@v4
         with:
           name: dist-${{ matrix.platform }}
           path: ./dist
-
-      - if: matrix.platform == 'linux'
-        uses: actions/upload-artifact@v4
-        with:
-          name: patches
-          path: ${{ runner.temp }}/patches.md
 
   arch:
     needs: [check, build]
@@ -289,12 +357,16 @@ jobs:
             echo
             echo "Built by $RUN_URL"
           } > notes.md
-          gh release delete "$TAG$SUFFIX" -R "$GITHUB_REPOSITORY" --cleanup-tag --yes 2>/dev/null || true
           cd dist
-          sha256sum * > SHA256SUMS
-          cat SHA256SUMS
-          gh release create "$TAG$SUFFIX" * \
+          rm -f manifest.json ./*SHA256SUMS
+          sums="FlClash-${TAG#v}-SHA256SUMS"
+          sha256sum * > "../$sums"
+          mv "../$sums" .
+          cat "$sums"
+          gh release delete "$TAG" -R "$GITHUB_REPOSITORY" --cleanup-tag --yes 2>/dev/null || true
+          gh release create "$TAG" * \
             -R "$GITHUB_REPOSITORY" \
             --target "${{ github.event.repository.default_branch }}" \
             --title "FlClash ${TAG#v} + patches" \
-            --notes-file ../notes.md
+            --notes-file ../notes.md \
+            --latest
