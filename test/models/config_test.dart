@@ -395,7 +395,7 @@ void main() {
       expect(props.systemProxy, true);
       expect(props.ipv6, false);
       expect(props.allowBypass, true);
-      expect(props.dnsHijacking, false);
+      expect(props.dnsHijacking, true);
       expect(props.accessControlProps.enable, true);
       expect(
         props.accessControlProps.mode,

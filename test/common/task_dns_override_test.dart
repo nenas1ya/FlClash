@@ -82,6 +82,11 @@ void main() {
       expect(dns, {
         'enable': true,
         'enhanced-mode': 'fake-ip',
+        'nameserver-policy': {
+          '+.ru': '77.88.8.8',
+          '+.su': '77.88.8.8',
+          '+.xn--p1ai': '77.88.8.8',
+        },
         'nameserver': ['1.1.1.1'],
         'ipv6': true,
         'fallback-filter': {'geoip': true},
