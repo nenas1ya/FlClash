@@ -28,6 +28,7 @@ env:
     optional patch/device-identity
     optional patch/ru-services
     optional patch/ru-apps
+    optional patch/global-rules-import
 
 jobs:
   check:
