@@ -1,37 +1,44 @@
 # FlClash + patches
 
-Служебная ветка форка: только CI, workflow `hwid-release` и `dev-check`.
+Service branch of the fork: CI only, the `hwid-release` and `dev-check` workflows.
 
-# Сборка релиза
+# Release build
 
-Каждые 6 часов `hwid-release` берёт последний стабильный релиз https://github.com/chen08209/FlClash, накладывает
-ветки-патчи из `PATCHES` и публикует сборку под тем же тегом `vX.Y.Z`, с файлом `FlClash-X.Y.Z-SHA256SUMS`.
+Every 6 hours `hwid-release` takes the latest stable release of https://github.com/chen08209/FlClash, applies the
+patch branches listed in `PATCHES` and publishes the build under the same `vX.Y.Z` tag, with a
+`FlClash-X.Y.Z-SHA256SUMS` file.
 
-* `required` - без патча релиз не собирается
-* `optional` - если патч не накладывается на новый тег, сборка идёт без него, в описании релиза это отмечено
-* Конфликты только в сгенерированных файлах не мешают: код перегенерируется после наложения патчей
-* Платформы - Windows (setup.exe, zip), Linux (AppImage, deb, rpm), Arch (`flclash-hwid-*.pkg.tar.zst`), Android (apk)
+* `required` - no release is built without the patch
+* `optional` - if the patch does not apply to a new tag, the build goes on without it and the release notes say so
+* Conflicts only in generated files do not count: the code is regenerated after the patches are applied
+* Conflicts in `arb/*.arb` are merged key by key, since patches append their strings to the end of those files
+* Platforms - Windows (setup.exe, zip), Linux (AppImage, deb, rpm), Arch (`flclash-hwid-*.pkg.tar.zst`), Android (apk)
 
-Ручной запуск: Actions → hwid-release → Run workflow, можно указать тег апстрима, `force` пересобирает существующий
-релиз.
+Manual run: Actions → hwid-release → Run workflow. An upstream tag can be given, `force` rebuilds an existing release.
 
-## Патчи
+## Patches
 
-* `patch/profile-request-headers` - свои заголовки запроса подписки, обязательный
-* `patch/fork-updates` - проверка и скачивание обновлений из релизов форка, обязательный
-* `patch/device-identity` - HWID и сообщения о лимите устройств
-* `patch/ru-services` - Госуслуги, Сбер, VK, Яндекс, Кинопоиск в проверке сервисов
-* `patch/service-status-count` - выбор количества отображаемых сервисов на главной
-* `patch/ru-apps` - умный выбор российских приложений на Android
-* `patch/global-rules-import` - добавленные правила текстом (quick edit) и импорт из `rules:` конфига по ссылке
+* `patch/profile-request-headers` - custom request headers for subscriptions, required
+* `patch/fork-updates` - check for and download updates from the fork's releases, required
+* `patch/device-identity` - HWID and device limit messages
+* `patch/ru-services` - Gosuslugi, Sber, VK, Yandex and Kinopoisk in the service check; Russian services in the default
+  bypass domains
+* `patch/service-status-count` - how many services the dashboard shows
+* `patch/ru-apps` - smart selection of Russian apps on Android; they bypass the VPN by default
+* `patch/ru-dns` - Cloudflare and Quad9 DoH for profiles without DNS, `.ru`/`.su`/`.рф` through Yandex; DNS hijacking
+  on by default (built on top of `patch/ru-apps`)
+* `patch/global-rules-import` - added rules as text (quick edit) and import from the `rules:` of a config by URL
+* `patch/default-rules` - a new install starts with proxy loopback blocked and LAN and BitTorrent direct
 
-Ветки строятся от тега апстрима, по одной линейной истории на патч. Новые колонки базы патчи добавляют при открытии
-(`_addColumnIfMissing` в `beforeOpen`), а не своей миграцией: номер `schemaVersion` остаётся апстримовым.
+Branches start from the upstream tag, one linear history per patch. Patches add new database columns when the database
+opens (`_addColumnIfMissing` in `beforeOpen`), not with a migration of their own: `schemaVersion` stays the upstream
+one.
 
 > [!note]
-> `dev-check` по ручному запуску перегенерирует код в ветке-патче, пушит результат и гоняет analyze и тесты.
+> `dev-check`, run manually, regenerates the code in a patch branch, pushes the result and runs analyze and the tests.
 
 ## Android
 
-* С secrets `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD` - подпись ключом форка, пакет `com.follow.clash`
-* Без них - отладочный ключ, пакет `com.follow.clash.dev`
+* With the `KEYSTORE`, `KEY_ALIAS`, `STORE_PASSWORD`, `KEY_PASSWORD` secrets - signed with the fork's key, package
+  `com.follow.clash`
+* Without them - debug key, package `com.follow.clash.dev`
