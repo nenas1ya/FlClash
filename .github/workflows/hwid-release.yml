@@ -29,6 +29,7 @@ env:
     optional patch/ru-services
     optional patch/service-status-count
     optional patch/ru-apps
+    optional patch/ru-dns
     optional patch/global-rules-import
 
 jobs:
