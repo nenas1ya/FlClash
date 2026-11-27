@@ -23,12 +23,21 @@ const defaultMitm = Mitm();
 const baselineDnsOverrideKeys = {
   DnsOverrideKey.enable,
   DnsOverrideKey.enhancedMode,
+  DnsOverrideKey.nameserverPolicy,
   DnsOverrideKey.nameserver,
 };
+
+/// The DoH servers are given by IP so that nothing resolves them first, and
+/// Russian zones go to Yandex so their sites answer with Russian addresses.
 const baselineDns = Dns(
   enable: true,
   enhancedMode: DnsMode.fakeIp,
-  nameserver: ['https://doh.pub/dns-query', 'https://dns.alidns.com/dns-query'],
+  nameserverPolicy: {
+    '+.ru': '77.88.8.8',
+    '+.su': '77.88.8.8',
+    '+.xn--p1ai': '77.88.8.8',
+  },
+  nameserver: ['https://1.1.1.1/dns-query', 'https://9.9.9.9/dns-query'],
 );
 const defaultGeoXUrl = {
   GeoResource.MMDB:
