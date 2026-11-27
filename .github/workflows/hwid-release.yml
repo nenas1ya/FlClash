@@ -27,6 +27,7 @@ env:
     required patch/fork-updates
     optional patch/device-identity
     optional patch/ru-services
+    optional patch/service-status-count
     optional patch/ru-apps
     optional patch/global-rules-import
 
