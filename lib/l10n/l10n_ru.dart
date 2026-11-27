@@ -4285,4 +4285,7 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Условия по одному полю объединяются через «или», по разным полям — через «и».';
+
+  @override
+  String get serviceDashboardCount => 'Сервисов на главной';
 }

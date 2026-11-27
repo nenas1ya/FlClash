@@ -4338,4 +4338,7 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Les conditions d’un même champ en demandent une seule, celles de champs différents toutes.';
+
+  @override
+  String get serviceDashboardCount => 'Services sur le tableau de bord';
 }

@@ -169,13 +169,15 @@ class _ServiceStatusCardState extends ConsumerState<ServiceStatusCard> {
     final density = DashboardDensityScope.of(context);
     final mobile = !density.isDesktop;
     final appLocalizations = context.appLocalizations;
-    // At most four: what the Core checks at once (serviceCheckConcurrency).
-    final shownCount = (mobile ? 1 : 2) * widget.columns;
+    final configuredCount = ref.watch(
+      appSettingProvider.select((state) => state.serviceDashboardCount),
+    );
+    final enabled = ref.watch(enabledServiceTargetsProvider);
+    final shownCount = configuredCount != null && configuredCount > 0
+        ? configuredCount.clamp(1, ServiceTarget.values.length)
+        : (mobile ? 1 : 2) * widget.columns;
     final stacked = widget.columns == 1;
-    final shown = ref
-        .watch(enabledServiceTargetsProvider)
-        .take(shownCount)
-        .toList();
+    final shown = enabled.take(shownCount).toList();
     _syncShown(shown.toSet(), shownCount);
     final state = ref.watch(serviceStatusProvider);
     final services = [
@@ -195,6 +197,8 @@ class _ServiceStatusCardState extends ConsumerState<ServiceStatusCard> {
         : null;
     Future<void> openSheet() => showServiceStatusSheet(context);
     final scale = DashboardDensityScope.scaleOf(context);
+    final padding = dashboardCardPadding(density);
+    final scrolls = !mobile && services.length > widget.columns * 2;
     final grid = _ServiceGrid(
       services: services,
       columns: widget.columns,
@@ -210,6 +214,7 @@ class _ServiceStatusCardState extends ConsumerState<ServiceStatusCard> {
     );
     return DashboardCard(
       semanticLabel: appLocalizations.serviceStatus,
+      padding: scrolls ? padding.copyWith(bottom: 0) : null,
       onTap: mobile ? openSheet : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -242,8 +247,23 @@ class _ServiceStatusCardState extends ConsumerState<ServiceStatusCard> {
                 ),
             ],
           ),
-          if (mobile) const SizedBox(height: 12) else const Spacer(),
-          grid,
+          if (mobile)
+            const SizedBox(height: 12)
+          else if (scrolls)
+            SizedBox(height: (density.isCompact ? 10 : 12) * scale)
+          else
+            const Spacer(),
+          if (scrolls)
+            Expanded(
+              child: DashboardFadeOut(
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.only(bottom: padding.bottom),
+                  child: grid,
+                ),
+              ),
+            )
+          else
+            grid,
         ],
       ),
     );
@@ -698,7 +718,14 @@ class ServiceManageView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final targets = ref.watch(serviceTargetsProvider);
     final enabled = ref.watch(enabledServiceTargetsProvider);
+    final configuredCount = ref.watch(
+      appSettingProvider.select((state) => state.serviceDashboardCount),
+    );
     final settings = ref.read(appSettingProvider.notifier);
+    final localizations = context.appLocalizations;
+    final selectedCount = configuredCount != null && configuredCount > 0
+        ? configuredCount.clamp(1, targets.length)
+        : null;
 
     void reorder(int oldIndex, int newIndex) {
       settings.update(
@@ -747,6 +774,28 @@ class ServiceManageView extends ConsumerWidget {
         slivers: [
           SliverToBoxAdapter(
             child: SizedBox(height: context.contentTopPadding),
+          ),
+          SliverPadding(
+            padding: context.listInsets.page(bottom: 12),
+            sliver: SliverToBoxAdapter(
+              child: ItemPositionProvider(
+                position: ItemPosition.startAndEnd,
+                child: ListItem<int?>.options(
+                  title: Text(localizations.serviceDashboardCount),
+                  options: [
+                    null,
+                    for (var count = 1; count <= targets.length; count++) count,
+                  ],
+                  sectionStarts: const {1},
+                  value: selectedCount,
+                  textBuilder: (value) =>
+                      value == null ? localizations.auto : '$value',
+                  onChanged: (value) => settings.update(
+                    (state) => state.copyWith(serviceDashboardCount: value),
+                  ),
+                ),
+              ),
+            ),
           ),
           SliverPrismReorderableList(
             itemBuilder: (_, index) => itemAt(index),

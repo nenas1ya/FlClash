@@ -4288,4 +4288,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Conditions on one field match any of them, on different fields all.';
+
+  @override
+  String get serviceDashboardCount => 'Dashboard services';
 }

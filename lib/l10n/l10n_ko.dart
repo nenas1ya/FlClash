@@ -4161,4 +4161,7 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get httpConditionTip =>
       '같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다.';
+
+  @override
+  String get serviceDashboardCount => '대시보드 서비스 수';
 }

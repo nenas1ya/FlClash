@@ -1421,5 +1421,6 @@
       }
     }
   },
-  "httpConditionTip": "Conditions on one field match any of them, on different fields all."
+  "httpConditionTip": "Conditions on one field match any of them, on different fields all.",
+  "serviceDashboardCount": "Dashboard services"
 }

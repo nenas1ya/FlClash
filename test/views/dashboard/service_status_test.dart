@@ -1273,4 +1273,108 @@ void main() {
       }
     }
   });
+
+  testWidgets('mobile card shows the configured service count', (tester) async {
+    final asked = <String>[];
+    answer((params) {
+      asked.addAll(params.names);
+      return [
+        for (final name in params.names)
+          _item(name, ServiceProbeStatus.available, delay: 40),
+      ];
+    });
+    await tester.pumpWidget(
+      app(settings: const AppSettingProps(serviceDashboardCount: 5)),
+    );
+    await tester.pumpAndSettle();
+
+    expect(asked.toSet(), {
+      for (final target in ServiceTarget.values.take(5)) target.id,
+    });
+    for (final target in ServiceTarget.values.take(5)) {
+      expect(tile(target), findsOneWidget);
+    }
+    expect(tile(ServiceTarget.values[5]), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('desktop card scrolls without overflowing past two rows', (
+    tester,
+  ) async {
+    final asked = <String>[];
+    answer((params) {
+      asked.addAll(params.names);
+      return [
+        for (final name in params.names)
+          _item(name, ServiceProbeStatus.available, delay: 40),
+      ];
+    });
+    await tester.pumpWidget(
+      app(
+        width: 320,
+        density: DashboardDensity.standard,
+        settings: const AppSettingProps(serviceDashboardCount: 6),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(asked.toSet(), {
+      for (final target in ServiceTarget.values.take(6)) target.id,
+    });
+    expect(find.byType(DashboardFadeOut), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the manage page picks the dashboard service count', (
+    tester,
+  ) async {
+    answer((params) => const []);
+    await tester.pumpWidget(app());
+    await tester.pumpAndSettle();
+    await openManage(tester);
+
+    expect(find.text('Dashboard services'), findsOneWidget);
+    expect(find.text('Shown on the dashboard'), findsNWidgets(2));
+
+    await tester.tap(find.text('Dashboard services'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('6').last);
+    await tester.pumpAndSettle();
+
+    expect(settingsOf(tester).serviceDashboardCount, 6);
+    expect(containerOf(tester).read(shownServiceCountProvider), 6);
+    final manageScrollable = find.descendant(
+      of: find.byType(ServiceManageView),
+      matching: find.byType(Scrollable),
+    );
+    final sixthRow = find.widgetWithText(
+      DecorationListItem,
+      ServiceTarget.values[5].label,
+    );
+    await tester.scrollUntilVisible(
+      sixthRow,
+      200,
+      scrollable: manageScrollable,
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: sixthRow,
+        matching: find.text('Shown on the dashboard'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.drag(manageScrollable, const Offset(0, 500));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Dashboard services'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Auto').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Auto').last);
+    await tester.pumpAndSettle();
+
+    expect(settingsOf(tester).serviceDashboardCount, isNull);
+    expect(containerOf(tester).read(shownServiceCountProvider), 2);
+  });
 }

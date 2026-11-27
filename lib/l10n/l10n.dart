@@ -7529,6 +7529,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Conditions on one field match any of them, on different fields all.'**
   String get httpConditionTip;
+
+  /// No description provided for @serviceDashboardCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard services'**
+  String get serviceDashboardCount;
 }
 
 class _AppLocalizationsDelegate

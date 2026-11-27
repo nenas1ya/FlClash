@@ -4335,4 +4335,7 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Las condiciones de un mismo campo se cumplen con una de ellas; las de campos distintos, todas.';
+
+  @override
+  String get serviceDashboardCount => 'Servicios en el panel';
 }

@@ -4036,4 +4036,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同一字段的条件满足其一即可，不同字段的都要满足。';
+
+  @override
+  String get serviceDashboardCount => '仪表盘服务数量';
 }

@@ -4083,4 +4083,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。';
+
+  @override
+  String get serviceDashboardCount => 'ダッシュボードのサービス数';
 }

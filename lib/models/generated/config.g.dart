@@ -80,6 +80,7 @@ _AppSettingProps _$AppSettingPropsFromJson(
           ?.map((e) => e as String)
           .toList() ??
       const [],
+  serviceDashboardCount: (json['serviceDashboardCount'] as num?)?.toInt(),
   tableColumnWidths:
       (json['tableColumnWidths'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(
@@ -126,6 +127,7 @@ Map<String, dynamic> _$AppSettingPropsToJson(_AppSettingProps instance) =>
       'editorFontSize': _$EditorFontSizeEnumMap[instance.editorFontSize]!,
       'serviceOrder': instance.serviceOrder,
       'disabledServices': instance.disabledServices,
+      'serviceDashboardCount': instance.serviceDashboardCount,
       'tableColumnWidths': instance.tableColumnWidths,
     };
 

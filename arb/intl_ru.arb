@@ -1235,5 +1235,6 @@
   "selectHttpRequestHint": "Здесь появятся запрос, ответ и время",
   "httpConditionShows": "Останется запросов: {count}",
   "httpConditionValuesIn": "{field} в списке",
-  "httpConditionTip": "Условия по одному полю объединяются через «или», по разным полям — через «и»."
+  "httpConditionTip": "Условия по одному полю объединяются через «или», по разным полям — через «и».",
+  "serviceDashboardCount": "Сервисов на главной"
 }
