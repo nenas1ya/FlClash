@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:fl_clash/common/common.dart';
+import 'package:fl_clash/common/default_rules.dart';
 import 'package:fl_clash/common/mitm_module.dart';
 import 'package:fl_clash/enum/enum.dart';
 import 'package:fl_clash/models/models.dart';
@@ -56,16 +57,21 @@ part 'scripts.dart';
   ],
 )
 class Database extends _$Database {
-  Database([QueryExecutor? executor])
+  /// Only the app's own database starts with [defaultGlobalRules], unless
+  /// [seedDefaults] says otherwise.
+  Database([QueryExecutor? executor, @visibleForTesting bool? seedDefaults])
     : _filePath = executor == null ? _appDatabasePath : null,
+      _seedsDefaults = seedDefaults ?? executor == null,
       super(executor ?? _openConnection());
 
   @visibleForTesting
   Database.onFile(File file)
     : _filePath = (() async => file.path),
+      _seedsDefaults = false,
       super(_openFile(file));
 
   final Future<String> Function()? _filePath;
+  final bool _seedsDefaults;
   Future<String?>? _resolvedPath;
 
   static Future<String> _appDatabasePath() => appPath.databasePath;
@@ -169,6 +175,12 @@ class Database extends _$Database {
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
+      onCreate: (m) async {
+        await m.createAll();
+        if (_seedsDefaults) {
+          await _seedDefaultRules();
+        }
+      },
       onUpgrade: (m, from, to) => transaction(() async {
         if (from < 2) {
           await m.createTable(iconRecords);
@@ -249,6 +261,17 @@ class Database extends _$Database {
       }),
       beforeOpen: (_) => customStatement('PRAGMA foreign_keys = ON'),
     );
+  }
+
+  /// Only a new database gets them; one being upgraded keeps its own rules.
+  Future<void> _seedDefaultRules() {
+    final orders = indexing.generateNKeys(defaultGlobalRules.length);
+    return batch((b) {
+      b.insertAll(rules, [
+        for (final (index, line) in defaultGlobalRules.indexed)
+          Rule.parse(line).copyWith(order: orders[index]).toCompanion(null),
+      ]);
+    });
   }
 
   Future<Set<String>> _columnsOf(String table) async {
