@@ -28,7 +28,10 @@ Manual run: Actions → hwid-release → Run workflow. An upstream tag can be gi
 * `patch/ru-dns` - Cloudflare and Quad9 DoH for profiles without DNS, `.ru`/`.su`/`.рф` through Yandex; DNS hijacking
   on by default (built on top of `patch/ru-apps`)
 * `patch/global-rules-import` - added rules as text (quick edit) and import from the `rules:` of a config by URL
-* `patch/default-rules` - a new install starts with proxy loopback blocked and LAN and BitTorrent direct
+* `patch/default-rules` - a new install starts with proxy loopback blocked and LAN and BitTorrent direct, and
+  sorts proxies by delay
+* `patch/custom-import` - importing a config into a custom profile keeps the subscriptions' `header` and
+  `override-expr` (built on top of `patch/profile-request-headers`)
 
 Branches start from the upstream tag, one linear history per patch. Patches add new database columns when the database
 opens (`_addColumnIfMissing` in `beforeOpen`), not with a migration of their own: `schemaVersion` stays the upstream
