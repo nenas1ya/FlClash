@@ -32,6 +32,7 @@ Manual run: Actions → hwid-release → Run workflow. An upstream tag can be gi
   sorts proxies by delay
 * `patch/custom-import` - importing a config into a custom profile keeps the subscriptions' `header` and
   `override-expr` (built on top of `patch/profile-request-headers`)
+* `patch/group-stats` - url-test and fallback groups show how many proxies are up and down instead of the pick
 
 Branches start from the upstream tag, one linear history per patch. Patches add new database columns when the database
 opens (`_addColumnIfMissing` in `beforeOpen`), not with a migration of their own: `schemaVersion` stays the upstream

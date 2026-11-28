@@ -33,6 +33,7 @@ env:
     optional patch/global-rules-import
     optional patch/default-rules
     optional patch/custom-import
+    optional patch/group-stats
 
 jobs:
   check:
