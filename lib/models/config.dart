@@ -448,7 +448,7 @@ ProxyCardType proxyCardTypeSafeFromJson(Object? cardType) {
 abstract class ProxiesStyleProps with _$ProxiesStyleProps {
   const factory ProxiesStyleProps({
     @Default(ProxiesType.list) ProxiesType type,
-    @Default(ProxiesSortType.none) ProxiesSortType sortType,
+    @Default(ProxiesSortType.delay) ProxiesSortType sortType,
     @Default(ProxiesLayout.standard) ProxiesLayout layout,
     @Default(ProxiesIconStyle.filled)
     @JsonKey(fromJson: proxiesIconStyleSafeFromJson)

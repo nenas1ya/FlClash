@@ -907,21 +907,21 @@ void main() {
     test('default values', () {
       const props = ProxiesStyleProps();
       expect(props.type, ProxiesType.list);
-      expect(props.sortType, ProxiesSortType.none);
+      expect(props.sortType, ProxiesSortType.delay);
       expect(props.layout, ProxiesLayout.standard);
     });
 
     test('round-trip with custom values', () {
       const props = ProxiesStyleProps(
         type: ProxiesType.tab,
-        sortType: ProxiesSortType.delay,
+        sortType: ProxiesSortType.name,
       );
       final restored = roundTrip(
         () => props.toJson(),
         ProxiesStyleProps.fromJson,
       );
       expect(restored.type, ProxiesType.tab);
-      expect(restored.sortType, ProxiesSortType.delay);
+      expect(restored.sortType, ProxiesSortType.name);
     });
 
     test('reads the icon styles saved under their former names', () {
