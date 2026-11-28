@@ -4335,4 +4335,20 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Las condiciones de un mismo campo se cumplen con una de ellas; las de campos distintos, todas.';
+
+  @override
+  String groupAliveProxies(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count activos',
+      one: '$count activo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String groupFailedProxies(Object count) {
+    return '$count caídos';
+  }
 }

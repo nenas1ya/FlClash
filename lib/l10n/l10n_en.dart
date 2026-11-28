@@ -4288,4 +4288,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Conditions on one field match any of them, on different fields all.';
+
+  @override
+  String groupAliveProxies(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count up',
+      one: '1 up',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String groupFailedProxies(Object count) {
+    return '$count down';
+  }
 }

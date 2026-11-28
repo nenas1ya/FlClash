@@ -156,4 +156,73 @@ void main() {
     expect(find.text('G0', skipOffstage: false), findsNothing);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('a url-test group header counts members up and down, a '
+      'selector keeps its pick', (tester) async {
+    tester.view.physicalSize = const Size(500, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final profile = Profile.normal().copyWith(currentGroupName: 'Country');
+    const groups = [
+      Group(
+        name: 'Country',
+        type: GroupType.URLTest,
+        hidden: false,
+        now: 'a',
+        all: [
+          Proxy(name: 'a', type: 'ss'),
+          Proxy(name: 'b', type: 'ss'),
+          Proxy(name: 'c', type: 'ss'),
+        ],
+      ),
+      Group(
+        name: 'Pick',
+        type: GroupType.Selector,
+        hidden: false,
+        now: 'Country',
+        all: [Proxy(name: 'Country', type: 'URLTest')],
+      ),
+    ];
+    final container = ProviderContainer(
+      overrides: [
+        profilesProvider.overrideWith(() => TestProfiles([profile])),
+        currentProfileIdProvider.overrideWithBuild((_, _) => profile.id),
+        currentGroupsStateProvider.overrideWithValue(
+          const GroupsState(value: groups),
+        ),
+        groupsProvider.overrideWithValue(groups),
+      ],
+    );
+    addTearDown(container.dispose);
+    globalState.container = container;
+    container
+        .read(viewSizeProvider.notifier)
+        .update((_) => const Size(500, 1000));
+    final testUrl = container.read(patchClashConfigProvider).testUrl;
+
+    await tester.pumpWidget(
+      UncontrolledProviderScope(
+        container: container,
+        child: const TestApp(child: ProxiesView()),
+      ),
+    );
+    container
+        .read(proxiesStyleSettingProvider.notifier)
+        .update((state) => state.copyWith(type: ProxiesType.list));
+    await tester.pump();
+
+    expect(find.text('Country'), findsWidgets);
+    expect(find.text('2 up · 1 down'), findsNothing);
+
+    container.read(delayDataSourceProvider.notifier)
+      ..setDelay(Delay(url: testUrl, name: 'a', value: 120))
+      ..setDelay(Delay(url: testUrl, name: 'b', value: 300))
+      ..setDelay(Delay(url: testUrl, name: 'c', value: -1));
+    await tester.pump();
+
+    expect(find.text('2 up · 1 down'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

@@ -166,6 +166,49 @@ void main() {
     );
   });
 
+  test('group delay counts tell members up from down, untested aside', () {
+    const testUrl = 'https://default.test';
+    container
+        .read(patchClashConfigProvider.notifier)
+        .update((state) => state.copyWith(testUrl: testUrl));
+    container
+        .read(groupsProvider.notifier)
+        .update(
+          (_) => const [
+            Group(
+              name: 'Country',
+              type: GroupType.URLTest,
+              all: [
+                Proxy(name: 'a', type: 'ss'),
+                Proxy(name: 'b', type: 'ss'),
+                Proxy(name: 'c', type: 'ss'),
+                Proxy(name: 'd', type: 'ss'),
+              ],
+            ),
+          ],
+        );
+    final delays = container.read(delayDataSourceProvider.notifier);
+
+    expect(container.read(groupDelayCountsProvider('Country')), (
+      alive: 0,
+      failed: 0,
+    ));
+
+    delays
+      ..setDelay(const Delay(url: testUrl, name: 'a', value: 120))
+      ..setDelay(const Delay(url: testUrl, name: 'b', value: 300))
+      ..setDelay(const Delay(url: testUrl, name: 'c', value: -1));
+
+    expect(container.read(groupDelayCountsProvider('Country')), (
+      alive: 2,
+      failed: 1,
+    ));
+    expect(container.read(groupDelayCountsProvider('Missing')), (
+      alive: 0,
+      failed: 0,
+    ));
+  });
+
   test('hidden timed-out nodes follow test batches and cleared delays', () {
     const testUrl = 'https://default.test';
     container

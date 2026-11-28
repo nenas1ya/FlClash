@@ -4083,4 +4083,14 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。';
+
+  @override
+  String groupAliveProxies(num count) {
+    return '$count 件稼働中';
+  }
+
+  @override
+  String groupFailedProxies(Object count) {
+    return '$count 件応答なし';
+  }
 }

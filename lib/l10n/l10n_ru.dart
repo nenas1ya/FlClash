@@ -4285,4 +4285,22 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get httpConditionTip =>
       'Условия по одному полю объединяются через «или», по разным полям — через «и».';
+
+  @override
+  String groupAliveProxies(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count рабочей',
+      many: '$count рабочих',
+      few: '$count рабочие',
+      one: '$count рабочая',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String groupFailedProxies(Object count) {
+    return '$count недоступно';
+  }
 }

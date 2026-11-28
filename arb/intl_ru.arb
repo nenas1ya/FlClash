@@ -1235,5 +1235,7 @@
   "selectHttpRequestHint": "Здесь появятся запрос, ответ и время",
   "httpConditionShows": "Останется запросов: {count}",
   "httpConditionValuesIn": "{field} в списке",
-  "httpConditionTip": "Условия по одному полю объединяются через «или», по разным полям — через «и»."
+  "httpConditionTip": "Условия по одному полю объединяются через «или», по разным полям — через «и».",
+  "groupAliveProxies": "{count, plural, one{{count} рабочая} few{{count} рабочие} many{{count} рабочих} other{{count} рабочей}}",
+  "groupFailedProxies": "{count} недоступно"
 }

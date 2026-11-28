@@ -2533,6 +2533,108 @@ final class DelayFamily extends $Family
   String toString() => r'delayProvider';
 }
 
+/// How many members of a group answered their last delay test and how many
+/// failed it, resolved like a proxy card; a member never tested counts in
+/// neither.
+
+@ProviderFor(groupDelayCounts)
+final groupDelayCountsProvider = GroupDelayCountsFamily._();
+
+/// How many members of a group answered their last delay test and how many
+/// failed it, resolved like a proxy card; a member never tested counts in
+/// neither.
+
+final class GroupDelayCountsProvider
+    extends
+        $FunctionalProvider<
+          ({int alive, int failed}),
+          ({int alive, int failed}),
+          ({int alive, int failed})
+        >
+    with $Provider<({int alive, int failed})> {
+  /// How many members of a group answered their last delay test and how many
+  /// failed it, resolved like a proxy card; a member never tested counts in
+  /// neither.
+  GroupDelayCountsProvider._({
+    required GroupDelayCountsFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'groupDelayCountsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$groupDelayCountsHash();
+
+  @override
+  String toString() {
+    return r'groupDelayCountsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<({int alive, int failed})> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ({int alive, int failed}) create(Ref ref) {
+    final argument = this.argument as String;
+    return groupDelayCounts(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({int alive, int failed}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<({int alive, int failed})>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GroupDelayCountsProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$groupDelayCountsHash() => r'07be6afbc976b7704f6aa08a9ab56cb32d08ed35';
+
+/// How many members of a group answered their last delay test and how many
+/// failed it, resolved like a proxy card; a member never tested counts in
+/// neither.
+
+final class GroupDelayCountsFamily extends $Family
+    with $FunctionalFamilyOverride<({int alive, int failed}), String> {
+  GroupDelayCountsFamily._()
+    : super(
+        retry: null,
+        name: r'groupDelayCountsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// How many members of a group answered their last delay test and how many
+  /// failed it, resolved like a proxy card; a member never tested counts in
+  /// neither.
+
+  GroupDelayCountsProvider call(String groupName) =>
+      GroupDelayCountsProvider._(argument: groupName, from: this);
+
+  @override
+  String toString() => r'groupDelayCountsProvider';
+}
+
 @ProviderFor(delayTestPhase)
 final delayTestPhaseProvider = DelayTestPhaseFamily._();
 

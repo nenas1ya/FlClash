@@ -203,6 +203,40 @@ int? delay(Ref ref, {required String proxyName, String? testUrl}) {
   );
 }
 
+/// How many members of a group answered their last delay test and how many
+/// failed it, resolved like a proxy card; a member never tested counts in
+/// neither.
+@riverpod
+({int alive, int failed}) groupDelayCounts(Ref ref, String groupName) {
+  final group = ref.watch(
+    groupsProvider.select((groups) => groups.getGroup(groupName)),
+  );
+  if (group == null) {
+    return (alive: 0, failed: 0);
+  }
+  final testUrl = ref.watch(realTestUrlProvider(group.testUrl));
+  final groups = ref.watch(groupsProvider);
+  final selectedMap = ref.watch(selectedMapProvider);
+  final delayMap = ref.watch(delayDataSourceProvider);
+  var alive = 0;
+  var failed = 0;
+  for (final proxy in group.all) {
+    final delay = computeProxyDelayState(
+      proxyName: proxy.name,
+      testUrl: testUrl,
+      groups: groups,
+      selectedMap: selectedMap,
+      delayMap: delayMap,
+    ).delay;
+    if (delay > 0) {
+      alive++;
+    } else if (delay < 0) {
+      failed++;
+    }
+  }
+  return (alive: alive, failed: failed);
+}
+
 @riverpod
 DelayTestPhase? delayTestPhase(
   Ref ref, {

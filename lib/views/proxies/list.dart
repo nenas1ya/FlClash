@@ -754,8 +754,43 @@ class _GroupSummary extends StatelessWidget {
           style: AppTextStyle.callout.of(context, emphasized: true),
         ),
         const SizedBox(height: 2),
-        Flexible(flex: 1, child: _SelectedProxyName(groupName: groupName)),
+        Flexible(flex: 1, child: _GroupSubtitle(groupName: groupName)),
       ],
+    );
+  }
+}
+
+/// A group that picks its proxy itself shows how many members are up and
+/// down once they are tested, rather than a pick that repeats its name.
+class _GroupSubtitle extends ConsumerWidget {
+  const _GroupSubtitle({required this.groupName});
+
+  final String groupName;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isComputed = ref.watch(
+      groupsProvider.select(
+        (groups) =>
+            groups.getGroup(groupName)?.type.isComputedSelected ?? false,
+      ),
+    );
+    if (!isComputed) {
+      return _SelectedProxyName(groupName: groupName);
+    }
+    final (:alive, :failed) = ref.watch(groupDelayCountsProvider(groupName));
+    if (alive == 0 && failed == 0) {
+      return _SelectedProxyName(groupName: groupName);
+    }
+    final appLocalizations = context.appLocalizations;
+    return Text(
+      [
+        appLocalizations.groupAliveProxies(alive),
+        if (failed > 0) appLocalizations.groupFailedProxies(failed),
+      ].join(' · '),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: AppTextStyle.caption1.of(context, emphasized: true).toLight,
     );
   }
 }

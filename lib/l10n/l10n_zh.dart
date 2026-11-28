@@ -4036,4 +4036,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get httpConditionTip => '同一字段的条件满足其一即可，不同字段的都要满足。';
+
+  @override
+  String groupAliveProxies(num count) {
+    return '$count 个可用';
+  }
+
+  @override
+  String groupFailedProxies(Object count) {
+    return '$count 个不可用';
+  }
 }

@@ -4161,4 +4161,14 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get httpConditionTip =>
       '같은 필드의 조건은 하나만 맞으면 되고, 다른 필드의 조건은 모두 맞아야 합니다.';
+
+  @override
+  String groupAliveProxies(num count) {
+    return '$count개 사용 가능';
+  }
+
+  @override
+  String groupFailedProxies(Object count) {
+    return '$count개 응답 없음';
+  }
 }

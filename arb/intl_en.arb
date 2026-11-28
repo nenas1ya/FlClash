@@ -1421,5 +1421,7 @@
       }
     }
   },
-  "httpConditionTip": "Conditions on one field match any of them, on different fields all."
+  "httpConditionTip": "Conditions on one field match any of them, on different fields all.",
+  "groupAliveProxies": "{count, plural, =1{1 up} other{{count} up}}",
+  "groupFailedProxies": "{count} down"
 }

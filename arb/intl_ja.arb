@@ -1235,5 +1235,7 @@
   "selectHttpRequestHint": "リクエスト、レスポンス、所要時間がここに表示されます",
   "httpConditionShows": "{count} 件のリクエストに絞り込みます",
   "httpConditionValuesIn": "現在のリクエストの{field}",
-  "httpConditionTip": "同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。"
+  "httpConditionTip": "同じフィールドの条件はいずれか一つ、異なるフィールドの条件はすべてに一致します。",
+  "groupAliveProxies": "{count} 件稼働中",
+  "groupFailedProxies": "{count} 件応答なし"
 }

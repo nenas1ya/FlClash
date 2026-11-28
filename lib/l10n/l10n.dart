@@ -7529,6 +7529,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Conditions on one field match any of them, on different fields all.'**
   String get httpConditionTip;
+
+  /// No description provided for @groupAliveProxies.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 up} other{{count} up}}'**
+  String groupAliveProxies(num count);
+
+  /// No description provided for @groupFailedProxies.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} down'**
+  String groupFailedProxies(Object count);
 }
 
 class _AppLocalizationsDelegate
