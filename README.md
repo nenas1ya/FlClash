@@ -22,7 +22,7 @@ Manual run: Actions → hwid-release → Run workflow. An upstream tag can be gi
 * `patch/fork-updates` - check for and download updates from the fork's releases, required
 * `patch/device-identity` - HWID and device limit messages
 * `patch/ru-services` - Gosuslugi, Sber, VK, Yandex and Kinopoisk in the service check; Russian services in the default
-  bypass domains
+  bypass domains; filter presets for the countries of Russian subscriptions
 * `patch/service-status-count` - how many services the dashboard shows
 * `patch/ru-apps` - smart selection of Russian apps on Android; they bypass the VPN by default
 * `patch/ru-dns` - Cloudflare and Quad9 DoH for profiles without DNS, `.ru`/`.su`/`.рф` through Yandex; DNS hijacking
