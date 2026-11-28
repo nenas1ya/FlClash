@@ -32,6 +32,7 @@ env:
     optional patch/ru-dns
     optional patch/global-rules-import
     optional patch/default-rules
+    optional patch/custom-import
 
 jobs:
   check:
