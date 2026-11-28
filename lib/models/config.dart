@@ -72,50 +72,88 @@ const defaultPacScript = '''function FindProxyForURL(url, host) {
 
 const defaultUserAgents = ['clash-verge/v2.4.2', 'ClashforWindows/0.19.23'];
 
+/// Country filters for the nodes Russian subscriptions carry, by flag,
+/// Russian and English name, capital and code, then the service entries
+/// subscriptions list among their nodes.
 const defaultFilters = [
-  Filter(
-    label: 'Hong Kong',
-    regex: r'(?i)🇭🇰|港|(?<![a-z])hk(?![a-z])|hong\s*kong',
-  ),
-  Filter(
-    label: 'Taiwan',
-    regex: r'(?i)🇹🇼|台湾|台灣|台北|新北|彰化|(?<![a-z])tw(?![a-z])|taiwan',
-  ),
-  Filter(
-    label: 'Japan',
-    regex: r'(?i)🇯🇵|日本|东京|東京|大阪|埼玉|(?<![a-z])jp(?![a-z])|japan|tokyo|osaka',
-  ),
-  Filter(
-    label: 'Singapore',
-    regex: r'(?i)🇸🇬|新加坡|狮城|獅城|(?<![a-z])sg(?![a-z])|singapore',
-  ),
   Filter(
     label: 'United States',
     regex:
-        r'(?i)🇺🇸|美国|美國|美西|美东|美東|洛杉矶|圣何塞|西雅图|硅谷|纽约'
-        r'|(?<![a-z])usa?(?![a-z])|united\s*states',
+        r'(?i)🇺🇸|сша|америк|(?<![a-z])usa?(?![a-z])|united\s*states|нью-йорк|new\s*york|лос-анджелес|los\s*angeles|майами|miami',
   ),
   Filter(
-    label: 'South Korea',
-    regex: r'(?i)🇰🇷|韩国|韓國|首尔|首爾|(?<![a-z])kr(?![a-z])|korea|seoul',
+    label: 'Germany',
+    regex:
+        r'(?i)🇩🇪|герман|germany|франкфурт|frankfurt|берлин|berlin|(?<![a-z])de(?![a-z])',
+  ),
+  Filter(
+    label: 'Poland',
+    regex: r'(?i)🇵🇱|польш|poland|варшав|warsaw|(?<![a-z])pl(?![a-z])',
+  ),
+  Filter(
+    label: 'Netherlands',
+    regex:
+        r'(?i)🇳🇱|нидерланд|netherlands|голланд|holland|амстердам|amsterdam|(?<![a-z])nl(?![a-z])',
   ),
   Filter(
     label: 'United Kingdom',
     regex:
-        r'(?i)🇬🇧|英国|英國|伦敦|倫敦|(?<![a-z])(uk|gb)(?![a-z])'
-        r'|united\s*kingdom|britain|london',
+        r'(?i)🇬🇧|великобритан|англи|лондон|(?<![a-z])uk(?![a-z])|united\s*kingdom|britain|london',
+  ),
+  Filter(
+    label: 'Turkey',
+    regex:
+        r'(?i)🇹🇷|турци|turkey|türkiye|стамбул|istanbul|(?<![a-z])tr(?![a-z])',
+  ),
+  Filter(
+    label: 'France',
+    regex: r'(?i)🇫🇷|франци|france|париж|paris|(?<![a-z])fr(?![a-z])',
+  ),
+  Filter(
+    label: 'Sweden',
+    regex: r'(?i)🇸🇪|швеци|sweden|стокгольм|stockholm|(?<![a-z])se(?![a-z])',
+  ),
+  Filter(
+    label: 'Finland',
+    regex: r'(?i)🇫🇮|финлянд|finland|хельсинки|helsinki|(?<![a-z])fi(?![a-z])',
+  ),
+  Filter(
+    label: 'Lithuania',
+    regex: r'(?i)🇱🇹|литв|lithuania|вильнюс|vilnius|(?<![a-z])lt(?![a-z])',
+  ),
+  Filter(
+    label: 'Kazakhstan',
+    regex: r'(?i)🇰🇿|казахстан|kazakhstan|алматы|almaty|(?<![a-z])kz(?![a-z])',
+  ),
+  Filter(
+    label: 'Russia',
+    regex: r'(?i)🇷🇺|росси|russia|москв|moscow|(?<![a-z])ru(?![a-z])',
+  ),
+  Filter(
+    label: 'Singapore',
+    regex: r'(?i)🇸🇬|сингапур|singapore|(?<![a-z])sg(?![a-z])',
+  ),
+  Filter(
+    label: 'Japan',
+    regex: r'(?i)🇯🇵|япони|токио|japan|tokyo|(?<![a-z])jp(?![a-z])',
+  ),
+  Filter(
+    label: 'Hong Kong',
+    regex: r'(?i)🇭🇰|гонконг|hong\s*kong|(?<![a-z])hk(?![a-z])',
   ),
   Filter(
     label: 'Remaining Traffic',
-    regex: r'(?i)剩余|剩餘|已用|流量\s*[:：]|traffic|remaining',
+    regex: r'(?i)остал|остаток|трафик|traffic|remaining',
   ),
-  Filter(label: 'Expiry Date', regex: r'(?i)到期|过期|過期|有效期|expir'),
-  Filter(label: 'Traffic Reset', regex: r'(?i)重置|reset'),
+  Filter(
+    label: 'Expiry Date',
+    regex: r'(?i)истека|истёк|истек|действует до|срок|expir',
+  ),
+  Filter(label: 'Traffic Reset', regex: r'(?i)сброс|обновлен|reset'),
   Filter(
     label: 'Website & Notices',
     regex:
-        r'(?i)官网|官網|网址|網址|域名|公告|套餐|客服|群组|群組|频道|頻道'
-        r'|website|telegram|(?<![a-z])tg(?![a-z])',
+        r'(?i)сайт|канал|телеграм|поддержк|website|telegram|(?<![a-z])tg(?![a-z])',
   ),
 ];
 
